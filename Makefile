@@ -6,7 +6,7 @@
 #    By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/06/06 14:31:35 by lleveque          #+#    #+#              #
-#    Updated: 2022/09/29 16:41:50 by lleveque         ###   ########.fr        #
+#    Updated: 2022/10/01 01:45:08 by lleveque         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -37,7 +37,7 @@ ${NAME}:	${OBJS}
 -include ${DEPS}
 
 clean:
-			${RM} ${OBJS}
+			${RM} ${OBJS} ${DEPS}
 
 fclean:	clean
 	${RM} ${NAME}
