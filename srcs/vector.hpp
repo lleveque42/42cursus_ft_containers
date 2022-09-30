@@ -6,7 +6,7 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/29 15:50:52 by lleveque          #+#    #+#             */
-/*   Updated: 2022/09/29 19:33:41 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/10/01 01:44:40 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,11 +43,15 @@ namespace ft {
 			size_type _capacity;
 			allocator_type _alloc;
 
-			size_type max_size() {
-				return _alloc.max_size();
-			}
-
 		public:
+
+			//TEMP
+			void print() {
+				for (size_type i = 0; i < _size; i++)
+					std::cout << "vector[" << i << "]" << _tab[i] << std::endl;
+			}
+			//TEMP
+
 			// construct/copy/destroy:
 				explicit vector(const allocator_type &alloc = allocator_type()) {
 					_capacity = 0;
@@ -68,15 +72,31 @@ namespace ft {
 			// template <class InputIterator>
 				// vector(InputIterator first, InputIterator last, const Allocator& = Allocator());
 
-			// vector(const vector<T,Allocator>& x);
-			~vector() {}
-			// vector<T,Allocator>& operator=(const vector<T,Allocator>& x);
+			// vector(const vector<value_type,Allocator>& x);
+
+			~vector() {
+				clear();
+				_alloc.deallocate(_tab, _capacity);
+			}
+
+			// vector &operator=(const vector &src) {
+			// }
 
 			// template <class InputIterator>
 			// 	void assign(InputIterator first, InputIterator last);
 
-			// void assign(size_type n, const T& u);
-			// allocator_type get_allocator() const;
+			void assign(size_type n, const value_type &u) {
+				if (n > max_size())
+						throw std::length_error("cannot create std::vector larger than max_size()");
+				clear();
+				resize(n, u);
+				for (size_type i = 0; i < _size; i++)
+					_tab[i] = u;
+			}
+
+			allocator_type get_allocator() const {
+				return _alloc;
+			}
 
 			// iterators:
 				// iterator begin();
@@ -89,29 +109,52 @@ namespace ft {
 				// const_reverse_iterator rend() const;
 
 			// capacity:
-				// bool empty() const;
+				bool empty() const {
+					return _size == 0 ? true : false;
+				}
 
 				void reserve(size_type n) {
-					value_type *new_tab;
+					value_type *newTab;
 
 					if (n <= _capacity)
 						return ;
 					if (n > max_size())
-						throw std::length_error("");
-					new_tab = _alloc.allocate(n);
-					for (size_type i = 0; i < _capacity; i++) {
-						_alloc.construct(&new_tab[i], _tab[i]);
+						throw std::length_error("vector::reserve");
+					newTab = _alloc.allocate(n);
+					for (size_type i = 0; i < _size; i++) {
+						_alloc.construct(&newTab[i], _tab[i]);
 						_alloc.destroy(&_tab[i]);
 					}
 					_alloc.deallocate(_tab, _capacity);
 					_capacity = n;
-					_tab = new_tab;
+					_tab = newTab;
 				}
 
-				// void resize(size_type sz, T c = T());
-				// size_type size() const {return _size};
-				// size_type max_size() const {return };
-				// size_type capacity() const {return _capacity};
+				void resize(size_type sz, value_type c = value_type()){
+					if (sz > max_size())
+						throw std::length_error("vector::_M_fill_insert");
+					if (sz < _size)
+						for (size_type i = sz; i < _size; i++)
+							_alloc.destroy(&_tab[i]);
+					else {
+						reserve(sz);
+						for (size_type i = _size - 1; i < sz; i++)
+							_alloc.construct(&_tab[i], c);
+					}
+					_size = sz;
+				}
+
+				size_type size() const {
+					return _size;
+				}
+
+				size_type max_size() const {
+					return _alloc.max_size();
+				}
+
+				size_type capacity() const {
+					return _capacity;
+				}
 
 			// element access:
 				// reference back();
@@ -124,26 +167,42 @@ namespace ft {
 				// const_reference operator[](size_type n) const;
 
 			// 23.2.4.3 modifiers:
-				// void pop_back();
-				// void push_back(const T& x) {
+				void pop_back() {
+					if (_size > 0)
+						_alloc.destroy(&_tab[--_size]);
+				}
 
+				void push_back(const value_type &x) {
+					if (_capacity == 0)
+						reserve(1);
+					if (_size + 1 > _capacity)
+						reserve(_capacity * 2);
+					_alloc.construct(&_tab[_size], x);
+					_size++;
+				}
 
-				// }
-				// void insert(iterator position, size_type n, const T& x);
-				// iterator insert(iterator position, const T& x);
+				// void insert(iterator position, size_type n, const value_type& x);
+				// iterator insert(iterator position, const value_type& x);
 
 				// template <class InputIterator>
 				// 	void insert(iterator position, InputIterator first, InputIterator last);
 
-				// void swap(vector<T,Allocator>&);
+				// void swap(vector<value_type,Allocator>&) {
+				// 	// value_type = tmp;
+				// }
 				// iterator erase(iterator position);
 				// iterator erase(iterator first, iterator last);
-				// void clear();
+
+				void clear() {
+					for (size_type i = 0; i < _size; i++)
+						_alloc.destroy(&_tab[i]);
+					_size = 0;
+				}
 
 	};
 
-// 	template <class T, class Allocator>
-// 		bool operator==(const vector<T,Allocator>& x, const vector<T,Allocator>& y);
+	template <class T, class Allocator>
+		bool operator==(const vector<T,Allocator>& x, const vector<T,Allocator>& y);
 
 // 	template <class T, class Allocator>
 // 		bool operator< (const vector<T,Allocator>& x, const vector<T,Allocator>& y);

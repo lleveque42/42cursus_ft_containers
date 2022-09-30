@@ -4,20 +4,33 @@
 
 int main(void) {
 
-	ft::vector<int> my(100, 2);
-	std::vector<int> og(100, 2);
+	ft::vector<int> my(10, 2);
+	std::vector<int> og(10, 2);
 
-	try {
-		my.reserve(21474836470);
+	my.print();
+	for (size_t i = 0; i < og.size(); i++)
+		std::cout << "og[" << i << "]" << og[i] << std::endl;
+	try
+	{
+		my.assign(10, 21);
 	}
-	catch (const std::exception &e) {
-		std::cerr << e.what() << std::endl;
+	catch(const std::exception& e)
+	{
+		std::cerr << e.what() << '\n';
 	}
-	try {
-		og.reserve(21474836470);
+	my.print();
+	std::cout << my.size() << std::endl;
+	try
+	{
+		og.assign(10, 21);
 	}
-	catch (const std::exception &e) {
-		std::cerr << e.what() << std::endl;
+	catch(const std::exception& e)
+	{
+		std::cerr << e.what() << '\n';
 	}
+
+	for (size_t i = 0; i < og.size(); i++)
+		std::cout << "og[" << i << "]" << og[i] << std::endl;
+	std::cout << og.size() << std::endl;
 	return (0);
 }
