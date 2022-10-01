@@ -6,7 +6,7 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/29 15:50:52 by lleveque          #+#    #+#             */
-/*   Updated: 2022/10/01 01:44:40 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/10/01 02:09:40 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,18 +69,18 @@ namespace ft {
 						_alloc.construct(&_tab[i], value);
 				}
 
-			// template <class InputIterator>
-				// vector(InputIterator first, InputIterator last, const Allocator& = Allocator());
+				// template <class InputIterator>
+					// vector(InputIterator first, InputIterator last, const Allocator& = Allocator());
 
-			// vector(const vector<value_type,Allocator>& x);
+				// vector(const vector<value_type,Allocator>& x);
 
-			~vector() {
-				clear();
-				_alloc.deallocate(_tab, _capacity);
-			}
+				~vector() {
+					clear();
+					_alloc.deallocate(_tab, _capacity);
+				}
 
-			// vector &operator=(const vector &src) {
-			// }
+				// vector &operator=(const vector &src) {
+				// }
 
 			// template <class InputIterator>
 			// 	void assign(InputIterator first, InputIterator last);
@@ -157,14 +157,41 @@ namespace ft {
 				}
 
 			// element access:
-				// reference back();
-				// reference front();
-				// reference at(size_type n);
-				// reference operator[](size_type n);
-				// const_reference back() const;
-				// const_reference front() const;
-				// const_reference at(size_type n) const;
-				// const_reference operator[](size_type n) const;
+				reference back() {
+					return _tab[_size - 1];
+				}
+
+				reference front() {
+					return _tab[0];
+				}
+
+				reference at(size_type n) {
+					if (n >= _size)
+						throw std::out_of_range("vector::_M_range_check: __n (which is");
+					return _tab[n];
+				}
+
+				reference operator[](size_type n) {
+					return _tab[n];
+				}
+
+				const_reference back() const {
+					return _tab[_size - 1];
+				}
+
+				const_reference front() const {
+					return _tab[0];
+				}
+
+				const_reference at(size_type n) const {
+					if (n >= _size)
+						throw std::out_of_range("vector::_M_range_check: __n (which is");
+					return _tab[n];
+				}
+
+				const_reference operator[](size_type n) const {
+					return _tab[n];
+				}
 
 			// 23.2.4.3 modifiers:
 				void pop_back() {
