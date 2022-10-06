@@ -6,15 +6,16 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/29 15:50:52 by lleveque          #+#    #+#             */
-/*   Updated: 2022/10/01 02:09:40 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/10/05 19:13:44 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# ifndef VECTOR_HPP
+#ifndef VECTOR_HPP
 # define VECTOR_HPP
 
 # include <memory>
 # include <iostream>
+# include "../iterators/vectorIterator.hpp"
 
 namespace ft {
 
@@ -24,23 +25,23 @@ namespace ft {
 
 		public:
 			// types:
-			typedef typename Allocator::reference reference;
-			typedef typename Allocator::const_reference const_reference;
-			// typedef implementation defined iterator; // See 23.1
-			// typedef implementation defined const_iterator; // See 23.1
-			typedef std::size_t size_type; // See 23.1
-			// typedef implementation defined difference_type;// See 23.1
-			typedef T value_type;
-			typedef Allocator allocator_type;
-			typedef typename Allocator::pointer pointer;
-			typedef typename Allocator::const_pointer const_pointer;
-			// typedef std::reverse_iterator<iterator> reverse_iterator;
-			// typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
+				typedef T value_type;
+				typedef std::size_t size_type;
+				typedef Allocator allocator_type;
+				typedef ptrdiff_t difference_type;
+				typedef typename Allocator::reference reference;
+				typedef typename Allocator::const_reference const_reference;
+				typedef typename Allocator::pointer pointer;
+				typedef typename Allocator::const_pointer const_pointer;
+				typedef ft::vectorIterator<pointer> iterator;
+				typedef ft::vectorIterator<const_pointer> const_iterator;
+				// typedef ft::reverse_iterator<iterator> reverse_iterator;
+				// typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
 
 		private:
-			value_type *_tab;
 			size_type _size;
 			size_type _capacity;
+			value_type *_tab;
 			allocator_type _alloc;
 
 		public:
@@ -69,8 +70,16 @@ namespace ft {
 						_alloc.construct(&_tab[i], value);
 				}
 
-				// template <class InputIterator>
-					// vector(InputIterator first, InputIterator last, const Allocator& = Allocator());
+				template <class InputIterator>
+					vector(InputIterator first, InputIterator last, const allocator_type &alloc = allocator_type()) {
+						_alloc = alloc;
+						_capacity = 0;
+						_size = 0;
+						_tab = _alloc.allocate(0);
+						for (; first != last; first++)
+							std::cout << *first << std::endl;
+						// assign(first, last);
+					}
 
 				// vector(const vector<value_type,Allocator>& x);
 
@@ -83,7 +92,12 @@ namespace ft {
 				// }
 
 			// template <class InputIterator>
-			// 	void assign(InputIterator first, InputIterator last);
+			// 	void assign(InputIterator first, InputIterator last) {
+			// 		clear();
+			// 		for (; first != last; first++)
+			// 			std::cout << *first << std::endl;
+			// 			// push_back(*first);
+			// 	}
 
 			void assign(size_type n, const value_type &u) {
 				if (n > max_size())
@@ -99,10 +113,21 @@ namespace ft {
 			}
 
 			// iterators:
-				// iterator begin();
-				// iterator end();
-				// const_iterator begin() const;
-				// const_iterator end() const;
+				iterator begin() {
+					return iterator(&_tab[0]);
+				}
+
+				iterator end() {
+					return iterator(&_tab[_size]);
+				}
+
+				const_iterator begin() const {
+					return const_iterator(*_tab[0]);
+				}
+
+				const_iterator end() const {
+					return const_iterator(*_tab[_size]);
+				}
 				// reverse_iterator rbegin();
 				// reverse_iterator rend();
 				// const_reverse_iterator rbegin() const;

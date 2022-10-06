@@ -6,11 +6,11 @@
 #    By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/06/06 14:31:35 by lleveque          #+#    #+#              #
-#    Updated: 2022/10/01 01:45:08 by lleveque         ###   ########.fr        #
+#    Updated: 2022/10/05 17:24:43 by lleveque         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-SRCS = srcs/main.cpp
+SRCS = main.cpp
 
 OBJS = ${SRCS:.cpp=.o}
 
