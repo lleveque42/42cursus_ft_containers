@@ -6,7 +6,7 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/05 12:43:27 by lleveque          #+#    #+#             */
-/*   Updated: 2022/10/05 19:15:16 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/10/06 19:29:04 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,21 +80,21 @@ namespace ft {
 				return old;
 			}
 
-			vectorIterator &operator+=(const difference_type &n) {
+			vectorIterator &operator+=(difference_type n) {
 				_current += n;
 				return *this;
 			}
 
-			vectorIterator operator+(const difference_type &n) {
+			vectorIterator operator+(difference_type n) const {
 				return vectorIterator(_current + n);
 			}
 
-			vectorIterator &operator-=(const difference_type &n) {
+			vectorIterator &operator-=(difference_type n) {
 				_current -= n;
 				return *this;
 			}
 
-			vectorIterator operator-(const difference_type &n) {
+			vectorIterator operator-(difference_type n) const {
 				return vectorIterator(_current - n);
 			}
 	};
@@ -128,6 +128,25 @@ namespace ft {
 		bool operator>(const vectorIterator<lIter> &left, const vectorIterator<rIter> &right) {
 			return left.base() > right.base();
 		}
+
+	template<typename Iter>
+		vectorIterator<Iter> operator+(typename vectorIterator<Iter>::difference_type &n, const vectorIterator<Iter> &left) {
+			return vectorIterator<Iter>(left.base() + n);
+		}
+
+	template< typename lIter, typename rIter>
+		typename vectorIterator<lIter>::difference_type operator-(const vectorIterator<lIter> &left, const vectorIterator<rIter> &right) {
+			return left.base() - right.base();
+		}
+
+	// template <typename V>
+		// vectorIterator<V> operator+(vectorIterator<V> lhs, typename vectorIterator<V>::difference_type rhs) {return (vectorIterator<V>(lhs.operator->() + rhs));}
+	// template <typename V>
+		// vectorIterator<V> operator+(typename vectorIterator<V>::difference_type lhs, vectorIterator<V> &rhs) {return (vectorIterator<V>(rhs.operator->() + lhs));}
+	// template <typename V>
+		// vectorIterator<V> operator-(vectorIterator<V> lhs, typename vectorIterator<V>::difference_type rhs) {return (vectorIterator<V>(lhs.operator->() - rhs));}
+	// template <typename L, typename R>
+	// typename vectorIterator<L>::difference_type operator-(vectorIterator<L> lhs, vectorIterator<R> rhs) {return (lhs.operator->() - rhs.operator->());}
 }
 
 #endif

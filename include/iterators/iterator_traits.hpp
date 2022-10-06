@@ -6,7 +6,7 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/05 12:17:29 by lleveque          #+#    #+#             */
-/*   Updated: 2022/10/05 17:27:06 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/10/06 17:59:09 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ namespace ft {
 		struct bidirectional_iterator_tag: public forward_iterator_tag {};
 		struct random_access_iterator_tag: public bidirectional_iterator_tag {};
 
-		template<class Category, class T, class Distance = ptrdiff_t, class Pointer = T*, class Reference = T&>
+		template<class Category, class T, class Distance = std::ptrdiff_t, class Pointer = T*, class Reference = T&>
 			struct iterator {
 				typedef T value_type;
 				typedef Distance difference_type;
@@ -46,7 +46,7 @@ namespace ft {
 
 		template<class T>
 			struct iterator_traits<T*> {
-				typedef ptrdiff_t difference_type;
+				typedef std::ptrdiff_t difference_type;
 				typedef T value_type;
 				typedef T* pointer;
 				typedef T& reference;
@@ -55,7 +55,7 @@ namespace ft {
 
 		template<class T>
 			struct iterator_traits<const T*> {
-				typedef ptrdiff_t difference_type;
+				typedef std::ptrdiff_t difference_type;
 				typedef T value_type;
 				typedef const T* pointer;
 				typedef const T& reference;
@@ -64,41 +64,41 @@ namespace ft {
 
 
 	// 24.3.4, iterator operations:
-		template <class InputIterator, class Distance>
-		void advance(InputIterator& i, Distance n);
-		template <class InputIterator>
-		typename iterator_traits<InputIterator>::difference_type distance(InputIterator first, InputIterator last);
+		// template <class InputIterator, class Distance>
+		// void advance(InputIterator& i, Distance n);
+		// template <class InputIterator>
+		// typename iterator_traits<InputIterator>::difference_type distance(InputIterator first, InputIterator last);
 
 	// 24.4, predefined iterators:
-		template <class Iterator> class reverse_iterator;
-		template <class Iterator>
-			bool operator==(const reverse_iterator<Iterator>& x, const reverse_iterator<Iterator>& y);
-		template <class Iterator>
-			bool operator<(const reverse_iterator<Iterator>& x, const reverse_iterator<Iterator>& y);
-		template <class Iterator>
-			bool operator!=(const reverse_iterator<Iterator>& x, const reverse_iterator<Iterator>& y);
-		template <class Iterator>
-			bool operator>(const reverse_iterator<Iterator>& x, const reverse_iterator<Iterator>& y);
-		template <class Iterator>
-			bool operator>=(const reverse_iterator<Iterator>& x, const reverse_iterator<Iterator>& y);
-		template <class Iterator>
-			bool operator<=(const reverse_iterator<Iterator>& x, const reverse_iterator<Iterator>& y);
-		template <class Iterator>
-			typename reverse_iterator<Iterator>::difference_type operator-(const reverse_iterator<Iterator>& x, const reverse_iterator<Iterator>& y);
-		template <class Iterator>
-			reverse_iterator<Iterator> operator+(typename reverse_iterator<Iterator>::difference_type n, const reverse_iterator<Iterator>& x);
-		template <class Container>
-			class back_insert_iterator;
-		template <class Container>
-			back_insert_iterator<Container> back_inserter(Container& x);
-		template <class Container>
-			class front_insert_iterator;
-		template <class Container>
-			front_insert_iterator<Container> front_inserter(Container& x);
-		template <class Container>
-			class insert_iterator;
-		template <class Container, class Iterator>
-			insert_iterator<Container> inserter(Container& x, Iterator i);
+		// template <class Iterator> class reverse_iterator;
+		// template <class Iterator>
+		// 	bool operator==(const reverse_iterator<Iterator>& x, const reverse_iterator<Iterator>& y);
+		// template <class Iterator>
+		// 	bool operator<(const reverse_iterator<Iterator>& x, const reverse_iterator<Iterator>& y);
+		// template <class Iterator>
+		// 	bool operator!=(const reverse_iterator<Iterator>& x, const reverse_iterator<Iterator>& y);
+		// template <class Iterator>
+		// 	bool operator>(const reverse_iterator<Iterator>& x, const reverse_iterator<Iterator>& y);
+		// template <class Iterator>
+		// 	bool operator>=(const reverse_iterator<Iterator>& x, const reverse_iterator<Iterator>& y);
+		// template <class Iterator>
+		// 	bool operator<=(const reverse_iterator<Iterator>& x, const reverse_iterator<Iterator>& y);
+		// template <class Iterator>
+		// 	typename reverse_iterator<Iterator>::difference_type operator-(const reverse_iterator<Iterator>& x, const reverse_iterator<Iterator>& y);
+		// template <class Iterator>
+		// 	reverse_iterator<Iterator> operator+(typename reverse_iterator<Iterator>::difference_type n, const reverse_iterator<Iterator>& x);
+		// template <class Container>
+		// 	class back_insert_iterator;
+		// template <class Container>
+		// 	back_insert_iterator<Container> back_inserter(Container& x);
+		// template <class Container>
+		// 	class front_insert_iterator;
+		// template <class Container>
+		// 	front_insert_iterator<Container> front_inserter(Container& x);
+		// template <class Container>
+		// 	class insert_iterator;
+		// template <class Container, class Iterator>
+		// 	insert_iterator<Container> inserter(Container& x, Iterator i);
 }
 
 #endif
