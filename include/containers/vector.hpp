@@ -6,7 +6,7 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/29 15:50:52 by lleveque          #+#    #+#             */
-/*   Updated: 2022/10/05 19:13:44 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/10/06 18:46:08 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # include <memory>
 # include <iostream>
 # include "../iterators/vectorIterator.hpp"
+# include "../utils/enable_if.hpp"
 
 namespace ft {
 
@@ -49,7 +50,7 @@ namespace ft {
 			//TEMP
 			void print() {
 				for (size_type i = 0; i < _size; i++)
-					std::cout << "vector[" << i << "]" << _tab[i] << std::endl;
+					std::cout << "vector[" << i << "] = " << _tab[i] << std::endl;
 			}
 			//TEMP
 
@@ -71,33 +72,48 @@ namespace ft {
 				}
 
 				template <class InputIterator>
-					vector(InputIterator first, InputIterator last, const allocator_type &alloc = allocator_type()) {
+					vector(InputIterator first, InputIterator last, const allocator_type &alloc = allocator_type(), typename ft::enable_if<!std::is_integral<InputIterator>::value, InputIterator>::type* = 0) {
 						_alloc = alloc;
 						_capacity = 0;
 						_size = 0;
 						_tab = _alloc.allocate(0);
-						for (; first != last; first++)
-							std::cout << *first << std::endl;
-						// assign(first, last);
+						assign(first, last);
 					}
 
-				// vector(const vector<value_type,Allocator>& x);
+				vector(const vector &other) {
+					_alloc = other._alloc;
+					_capacity = other._capacity;
+					_size = other._size;
+					_tab = _alloc.allocate(_capacity);
+					for (size_type i = 0; i < _size; i++)
+						_alloc.construct(&_tab[i],  other._tab[i]);
+				}
 
 				~vector() {
 					clear();
 					_alloc.deallocate(_tab, _capacity);
 				}
 
-				// vector &operator=(const vector &src) {
-				// }
+				vector &operator=(const vector &src) {
+					if (this == &src)
+						return * this;
+					clear();
+					_alloc.deallocate(_tab, _capacity);
+					_alloc = src._alloc;
+					_capacity = src._capacity;
+					_size = src._size;
+					_tab = _alloc.allocate(_capacity);
+					for (size_type i = 0; i < _size; i++)
+						_alloc.construct(&_tab[i], src._tab[i]);
+					return *this;
+				}
 
-			// template <class InputIterator>
-			// 	void assign(InputIterator first, InputIterator last) {
-			// 		clear();
-			// 		for (; first != last; first++)
-			// 			std::cout << *first << std::endl;
-			// 			// push_back(*first);
-			// 	}
+			template <class InputIterator>
+				void assign(InputIterator first, InputIterator last) {
+					clear();
+					for (; first != last; first++)
+						push_back(*first);
+				}
 
 			void assign(size_type n, const value_type &u) {
 				if (n > max_size())
@@ -114,19 +130,19 @@ namespace ft {
 
 			// iterators:
 				iterator begin() {
-					return iterator(&_tab[0]);
+					return iterator(_tab);
 				}
 
 				iterator end() {
-					return iterator(&_tab[_size]);
+					return iterator(_tab + _size);
 				}
 
 				const_iterator begin() const {
-					return const_iterator(*_tab[0]);
+					return const_iterator(_tab);
 				}
 
 				const_iterator end() const {
-					return const_iterator(*_tab[_size]);
+					return const_iterator(_tab + _size);
 				}
 				// reverse_iterator rbegin();
 				// reverse_iterator rend();
@@ -233,11 +249,28 @@ namespace ft {
 					_size++;
 				}
 
-				// void insert(iterator position, size_type n, const value_type& x);
-				// iterator insert(iterator position, const value_type& x);
+				iterator insert(iterator position, const value_type &x) {
+					size_type pos = position - begin();
+
+					if (_size + 1 > _capacity)
+						reserve(_capacity * 2);
+					_size++;
+					_alloc.construct(&_tab[_size], _tab[_size - 1]);
+					for (size_type i = _size - 1; i > pos; i--)
+						_tab[i] = _tab[i - 1];
+					_tab[pos] = x;
+					return begin() + pos;
+				}
+
+				// void insert(iterator position, size_type n, const value_type &x) {
+				// 	if (_size + n > _capacity)
+				// 		reserve(_capacity + n);
+				// }
 
 				// template <class InputIterator>
-				// 	void insert(iterator position, InputIterator first, InputIterator last);
+				// 	void insert(iterator position, InputIterator first, InputIterator last) {
+
+				// 	}
 
 				// void swap(vector<value_type,Allocator>&) {
 				// 	// value_type = tmp;
