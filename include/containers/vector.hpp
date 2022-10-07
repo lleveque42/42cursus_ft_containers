@@ -6,7 +6,7 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/29 15:50:52 by lleveque          #+#    #+#             */
-/*   Updated: 2022/10/06 18:46:08 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/10/07 17:41:07 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,9 @@
 # include <memory>
 # include <iostream>
 # include "../iterators/vectorIterator.hpp"
+# include "../iterators/reverse_iterator.hpp"
 # include "../utils/enable_if.hpp"
+# include "../utils/is_integral.hpp"
 
 namespace ft {
 
@@ -36,8 +38,8 @@ namespace ft {
 				typedef typename Allocator::const_pointer const_pointer;
 				typedef ft::vectorIterator<pointer> iterator;
 				typedef ft::vectorIterator<const_pointer> const_iterator;
-				// typedef ft::reverse_iterator<iterator> reverse_iterator;
-				// typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
+				typedef ft::reverse_iterator<iterator> reverse_iterator;
+				typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
 
 		private:
 			size_type _size;
@@ -72,7 +74,7 @@ namespace ft {
 				}
 
 				template <class InputIterator>
-					vector(InputIterator first, InputIterator last, const allocator_type &alloc = allocator_type(), typename ft::enable_if<!std::is_integral<InputIterator>::value, InputIterator>::type* = 0) {
+					vector(InputIterator first, InputIterator last, const allocator_type &alloc = allocator_type(), typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = 0) {
 						_alloc = alloc;
 						_capacity = 0;
 						_size = 0;
@@ -144,10 +146,22 @@ namespace ft {
 				const_iterator end() const {
 					return const_iterator(_tab + _size);
 				}
-				// reverse_iterator rbegin();
-				// reverse_iterator rend();
-				// const_reverse_iterator rbegin() const;
-				// const_reverse_iterator rend() const;
+
+				reverse_iterator rbegin() {
+					return reverse_iterator(end());
+				}
+
+				reverse_iterator rend() {
+					return reverse_iterator(begin());
+				}
+
+				const_reverse_iterator rbegin() const {
+					return const_reverse_iterator(end());
+				}
+
+				const_reverse_iterator rend() const {
+					return const_reverse_iterator(begin());
+				}
 
 			// capacity:
 				bool empty() const {
@@ -254,29 +268,53 @@ namespace ft {
 
 					if (_size + 1 > _capacity)
 						reserve(_capacity * 2);
-					_size++;
 					_alloc.construct(&_tab[_size], _tab[_size - 1]);
 					for (size_type i = _size - 1; i > pos; i--)
 						_tab[i] = _tab[i - 1];
 					_tab[pos] = x;
+					_size++;
 					return begin() + pos;
 				}
 
-				// void insert(iterator position, size_type n, const value_type &x) {
-				// 	if (_size + n > _capacity)
-				// 		reserve(_capacity + n);
-				// }
+				void insert(iterator position, size_type n, const value_type &x) {
+					size_type pos = position - begin();
 
-				// template <class InputIterator>
-				// 	void insert(iterator position, InputIterator first, InputIterator last) {
+					if (_size + n > _capacity)
+						reserve(_capacity + n + 1);
+					for (size_type i = _size; i < _size + n ; i++)
+						_alloc.construct(&_tab[i + 1], _tab[i]);
+					_size += n;
+					for (size_type i = _size; i > pos; i--)
+						_tab[i] = _tab[i - n];
+					for (; n > 0; n--)
+						_tab[pos + n - 1] = x;
+				}
 
-				// 	}
+				template <class InputIterator>
+					void insert(iterator position, InputIterator first, InputIterator last) {
+						while (first != last)
+							insert(position++, *first++);
+					}
 
 				// void swap(vector<value_type,Allocator>&) {
 				// 	// value_type = tmp;
 				// }
-				// iterator erase(iterator position);
-				// iterator erase(iterator first, iterator last);
+
+				iterator erase(iterator position) {
+					size_type pos = position - begin();
+
+					for (size_type i = pos; i < _size; i++)
+						_tab[i] = _tab[i + 1];
+					_alloc.destroy(&_tab[_size]);
+					_size--;
+					return begin() + pos;
+				}
+
+				iterator erase(iterator first, iterator last) {
+					while (first != last)
+						erase(--last);
+					return last;
+				}
 
 				void clear() {
 					for (size_type i = 0; i < _size; i++)

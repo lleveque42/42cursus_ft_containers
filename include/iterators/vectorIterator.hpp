@@ -6,7 +6,7 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/05 12:43:27 by lleveque          #+#    #+#             */
-/*   Updated: 2022/10/07 11:05:58 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/10/07 14:48:12 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,10 +31,13 @@ namespace ft {
 			typedef typename ft::iterator_traits<Iterator>::reference reference;
 			typedef typename ft::iterator_traits<Iterator>::iterator_category iterator_category;
 
-			vectorIterator() : _current() {};
-			explicit vectorIterator(const Iterator &i) : _current(i) {};
-			vectorIterator(const vectorIterator &src) : _current(src._current) {};
-			~vectorIterator() {};
+			vectorIterator() : _current() {}
+			explicit vectorIterator(const Iterator &i) : _current(i) {}
+			vectorIterator(const vectorIterator &src) : _current(src._current) {}
+			~vectorIterator() {}
+
+			template<typename Iter>
+				vectorIterator(const vectorIterator<Iter> &i) : _current((iterator_type)i.operator->()) {}
 
 			vectorIterator	operator=(vectorIterator const &src) {
 				if (*this != src)
@@ -50,7 +53,7 @@ namespace ft {
 				return _current;
 			}
 
-			const iterator_type base() const {
+			iterator_type base() const {
 				return _current;
 			}
 
@@ -85,7 +88,7 @@ namespace ft {
 				return *this;
 			}
 
-			// it = test.begin() + n;
+			// it = it1 + n;
 			vectorIterator operator+(difference_type n) const {
 				return vectorIterator(_current + n);
 			}
@@ -95,7 +98,7 @@ namespace ft {
 				return *this;
 			}
 
-			// it = test.begin() - n;
+			// it = it1 - n;
 			vectorIterator operator-(difference_type n) const {
 				return vectorIterator(_current - n);
 			}
@@ -131,13 +134,13 @@ namespace ft {
 			return left.base() > right.base();
 		}
 
-	// it = n + test.begin();
+	// it = n + it1;
 	template<typename Iter>
 		vectorIterator<Iter> operator+(typename vectorIterator<Iter>::difference_type n, const vectorIterator<Iter> &right) {
 			return vectorIterator<Iter>(right.base() + n);
 		}
 
-	// it = it - test.begin();
+	// it = it1 - it2;
 	template< typename lIter, typename rIter>
 		typename vectorIterator<lIter>::difference_type operator-(const vectorIterator<lIter> &left, const vectorIterator<rIter> &right) {
 			return left.base() - right.base();
