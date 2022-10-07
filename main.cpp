@@ -6,7 +6,7 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/05 12:09:09 by lleveque          #+#    #+#             */
-/*   Updated: 2022/10/06 19:33:53 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/10/07 11:06:33 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,11 @@ int main(void) {
 	ft::vector<int> vide = my3;
 	my3.print();
 	ft::vector<int>::iterator itvide = vide.begin();
+	std::vector<int>::iterator itog1 = og.begin();
+	itog1++;
+	itog1++;
+	itog1++;
+	itog1++;
 	std::cout << vide.size() << std::endl;
 	vide.print();
 	itvide++;
@@ -56,7 +61,9 @@ int main(void) {
 	vide.print();
 	itvide--;
 	itvide--;
-	ft::vector<int>::iterator ittest = vide.begin() + itvide;
-	std::cout << *ittest << std::endl;
+	std::ptrdiff_t hello2 =  itvide - vide.begin();
+	std::ptrdiff_t hello = og.begin() - itog1;
+	std::cout << hello2 << std::endl;
+	std::cout << hello << std::endl;
 	return (0);
 }
