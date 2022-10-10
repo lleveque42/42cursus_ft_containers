@@ -6,7 +6,7 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/29 15:50:52 by lleveque          #+#    #+#             */
-/*   Updated: 2022/10/07 17:41:07 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/10/10 12:36:05 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include "../iterators/reverse_iterator.hpp"
 # include "../utils/enable_if.hpp"
 # include "../utils/is_integral.hpp"
+# include "../utils/lexicographical_compare.hpp"
 
 namespace ft {
 
@@ -111,7 +112,7 @@ namespace ft {
 				}
 
 			template <class InputIterator>
-				void assign(InputIterator first, InputIterator last) {
+				void assign(InputIterator first, InputIterator last, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = 0) {
 					clear();
 					for (; first != last; first++)
 						push_back(*first);
@@ -291,7 +292,7 @@ namespace ft {
 				}
 
 				template <class InputIterator>
-					void insert(iterator position, InputIterator first, InputIterator last) {
+					void insert(iterator position, InputIterator first, InputIterator last, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = 0) {
 						while (first != last)
 							insert(position++, *first++);
 					}
@@ -325,22 +326,43 @@ namespace ft {
 	};
 
 	template <class T, class Allocator>
-		bool operator==(const vector<T,Allocator>& x, const vector<T,Allocator>& y);
+		bool operator==(const vector<T,Allocator>& x, const vector<T,Allocator>& y) {
+			if (x.size() != y.size())
+				return false;
+			for (size_t i = 0; i < x.size(); i++)
+				if (x[i] != y[i])
+					return false;
+			return true;
+		}
 
-// 	template <class T, class Allocator>
-// 		bool operator< (const vector<T,Allocator>& x, const vector<T,Allocator>& y);
+	template <class T, class Allocator>
+		bool operator!=(const vector<T,Allocator>& x, const vector<T,Allocator>& y) {
+			return !(x == y);
+		}
 
-// 	template <class T, class Allocator>
-// 		bool operator!=(const vector<T,Allocator>& x, const vector<T,Allocator>& y);
+	template <class T, class Allocator>
+		bool operator< (const vector<T,Allocator>& x, const vector<T,Allocator>& y) {
+			return ft::lexicographical_compare(x.begin(), x.end(), y.begin(), y.end());
+		}
 
-// 	template <class T, class Allocator>
-// 		bool operator> (const vector<T,Allocator>& x, const vector<T,Allocator>& y);
+	template <class T, class Allocator>
+		bool operator> (const vector<T,Allocator>& x, const vector<T,Allocator>& y) {
+			return y < x;
+		}
 
-// 	template <class T, class Allocator>
-// 		bool operator>=(const vector<T,Allocator>& x, const vector<T,Allocator>& y);
+	template <class T, class Allocator>
+		bool operator>=(const vector<T,Allocator>& x, const vector<T,Allocator>& y) {
+			if (x == y || x > y)
+				return true;
+			return false;
+		}
 
-// 	template <class T, class Allocator>
-// 		bool operator<=(const vector<T,Allocator>& x, const vector<T,Allocator>& y);
+	template <class T, class Allocator>
+		bool operator<=(const vector<T,Allocator>& x, const vector<T,Allocator>& y) {
+			if (x == y || x < y)
+				return true;
+			return false;
+		}
 
 // 	// specialized algorithms:
 // 	template <class T, class Allocator>
