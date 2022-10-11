@@ -6,7 +6,7 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/05 12:09:09 by lleveque          #+#    #+#             */
-/*   Updated: 2022/10/10 12:36:15 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/10/11 17:35:20 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,31 +110,78 @@
 // 	return (0);
 // }
 
-// #include "test_utils.hpp"
-// #include "VECTOR_UC.HPP"
-// #include <vector>
+// #define TESTED_TYPE std::string
 
-// #ifndef STD
-# define NAMESPACE ft
-// #else
-// # define NAMESPACE std
-// #endif
+// int		main(void)
+// {
+// 	TESTED_NAMESPACE::vector<TESTED_TYPE> vct(8);
+// 	TESTED_NAMESPACE::vector<TESTED_TYPE> vct2;
+// 	TESTED_NAMESPACE::vector<TESTED_TYPE>::iterator it = vct.begin();
 
-using namespace NAMESPACE;
+// 	for (unsigned long int i = 0; i < vct.size(); ++i)
+// 		it[i] = std::string((vct.size() - i), i + 65);
+// 	// print_vec(vct, true);
 
-int main ()
+// 	std::cout << "push_back():\n" << std::endl;
+
+// 	vct.push_back("One long string");
+// 	vct2.push_back("Another long string");
+
+// 	// print_vec(vct);
+// 	// print_vec(vct2);
+
+// 	vct.pop_back();
+// 	vct2.pop_back();
+
+// 	// print_vec(vct);
+// 	// print_vec(vct2);
+
+// 	return (0);
+// }
+
+
+#define TESTED_NAMESPACE ft
+#define TESTED_TYPE int
+// #define TESTED_TYPE std::string
+
+// #define TESTED_TYPE int
+
+int		main(void)
 {
-  vector<int> foo (3,100);   // three ints with a value of 100
-  vector<int> bar (2,200);   // two ints with a value of 200
+	const int size = 5;
+	TESTED_NAMESPACE::vector<TESTED_TYPE> const vct(size);
+	TESTED_NAMESPACE::vector<TESTED_TYPE>::iterator it = vct.begin(); // <-- error expected
 
-  if (foo==bar) std::cout << "foo and bar are equal\n";
-  if (foo!=bar) std::cout << "foo and bar are not equal\n";
-  if (foo< bar) std::cout << "foo is less than bar\n";
-  if (foo> bar) std::cout << "foo is greater than bar\n";
-  if (foo<=bar) std::cout << "foo is less than or equal to bar\n";
-  if (foo>=bar) std::cout << "foo is greater than or equal to bar\n";
+	for (int i = 0; i < size; ++i) {
+		std::cout << "1: " << it[i] << ", " << vct[i] << std::endl;
+		it[i] = i;
+		std::cout << "2: " << it[i] << ", " << vct[i] << std::endl;
+	}
 
-  return 0;
+	return (0);
 }
+
+
+void print_vec(TESTED_NAMESPACE::vector<TESTED_TYPE> vec)
+{
+	if (vec.empty())
+	{
+		std::cout << "-----------------" << std::endl;
+		std::cout << "Vec's empty !" << std::endl;
+		std::cout << "-----------------" << std::endl;
+	}
+	else
+	{
+		TESTED_NAMESPACE::vector<TESTED_TYPE>::iterator it = vec.begin();
+		TESTED_NAMESPACE::vector<TESTED_TYPE>::iterator ite = vec.end();
+		std::cout << "-----------------" << std::endl;
+		std::cout << "Size : " << vec.size() << std::endl;
+		std::cout << "Capacity : " << vec.capacity() << std::endl;
+		for (; it != ite; it++)
+			std::cout << *it << " ";
+		std::cout << std::endl << "-----------------" << std::endl;
+	}
+}
+
 
 
