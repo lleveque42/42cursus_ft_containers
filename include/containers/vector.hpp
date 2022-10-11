@@ -6,7 +6,7 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/29 15:50:52 by lleveque          #+#    #+#             */
-/*   Updated: 2022/10/10 12:36:05 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/10/11 17:42:28 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -194,7 +194,7 @@ namespace ft {
 							_alloc.destroy(&_tab[i]);
 					else {
 						reserve(sz);
-						for (size_type i = _size - 1; i < sz; i++)
+						for (size_type i = _size; i < sz; i++)
 							_alloc.construct(&_tab[i], c);
 					}
 					_size = sz;
@@ -267,12 +267,18 @@ namespace ft {
 				iterator insert(iterator position, const value_type &x) {
 					size_type pos = position - begin();
 
+					if (_capacity == 0)
+						reserve(1);
 					if (_size + 1 > _capacity)
 						reserve(_capacity * 2);
-					_alloc.construct(&_tab[_size], _tab[_size - 1]);
-					for (size_type i = _size - 1; i > pos; i--)
-						_tab[i] = _tab[i - 1];
-					_tab[pos] = x;
+					if (_size > 0) {
+						_alloc.construct(&_tab[_size], _tab[_size - 1]);
+						for (size_type i = _size - 1; i > pos; i--)
+							_tab[i] = _tab[i - 1];
+						_tab[pos] = x;
+					}
+					else
+						_alloc.construct(&_tab[0],  x);
 					_size++;
 					return begin() + pos;
 				}
@@ -280,12 +286,14 @@ namespace ft {
 				void insert(iterator position, size_type n, const value_type &x) {
 					size_type pos = position - begin();
 
+					if (n < 1)
+						return ;
 					if (_size + n > _capacity)
 						reserve(_capacity + n + 1);
-					for (size_type i = _size; i < _size + n ; i++)
+					for (size_type i = _size - 1; i < _size + n - 1; ++i)
 						_alloc.construct(&_tab[i + 1], _tab[i]);
 					_size += n;
-					for (size_type i = _size; i > pos; i--)
+					for (size_type i = _size - n; i >= pos + n; i--)
 						_tab[i] = _tab[i - n];
 					for (; n > 0; n--)
 						_tab[pos + n - 1] = x;
@@ -293,8 +301,31 @@ namespace ft {
 
 				template <class InputIterator>
 					void insert(iterator position, InputIterator first, InputIterator last, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = 0) {
-						while (first != last)
-							insert(position++, *first++);
+						size_type pos = position - begin();
+						size_type diff = 0;
+						size_type toMove = 0;
+
+						for (InputIterator tmp = first; tmp != last; tmp++)
+							diff++;
+						if (_size + diff > _capacity)
+							reserve(_capacity + diff + 1);
+						if (_size > 0) {
+							for (size_type i = _size; i < _size + diff; ++i)
+								_alloc.construct(&_tab[i], 0);
+							toMove = _size - pos;
+							_size += diff;
+							for (size_type i = 1; toMove > 0; --toMove) {
+								_tab[_size - i] = _tab[_size - diff - i];
+								++i;
+							}
+							for (size_type i = 0; i < diff; i++)
+								_tab[pos + i] = *first++;
+						}
+						else {
+							for (size_type i = 0; i < diff; i++)
+								_alloc.construct(&_tab[i], *first++);
+							_size += diff;
+						}
 					}
 
 				// void swap(vector<value_type,Allocator>&) {
@@ -303,10 +334,21 @@ namespace ft {
 
 				iterator erase(iterator position) {
 					size_type pos = position - begin();
+					size_type toMove = 0;
 
-					for (size_type i = pos; i < _size; i++)
+					if (position + 1 == end()) {
+						pop_back();
+						return end();
+					}
+					toMove = _size - pos;
+					_alloc.destroy(&_tab[pos]);
+					_alloc.construct(&_tab[pos], _tab[pos + 1]);
+					toMove--;
+					for (size_type i = pos + 1; toMove > 1; toMove--) {
 						_tab[i] = _tab[i + 1];
-					_alloc.destroy(&_tab[_size]);
+						i++;
+					}
+					_alloc.destroy(&_tab[_size - 1]);
 					_size--;
 					return begin() + pos;
 				}
