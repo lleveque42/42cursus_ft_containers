@@ -6,7 +6,7 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/07 14:37:16 by lleveque          #+#    #+#             */
-/*   Updated: 2022/10/07 15:25:17 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/10/11 17:02:19 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ namespace ft {
 			template<typename Iter>
 				reverse_iterator(const reverse_iterator<Iter> &i) : _current(i.base()) {}
 
-			reverse_iterator	operator=(reverse_iterator const &src) {
+			reverse_iterator	&operator=(reverse_iterator const &src) {
 				if (*this != src)
 					_current = src._current;
 				return *this;
@@ -58,7 +58,7 @@ namespace ft {
 				return _current;
 			}
 
-			reverse_iterator operator[](const difference_type &n) {
+			reference operator[](const difference_type &n) const {
 				return _current[-n - 1];
 			}
 
@@ -144,7 +144,7 @@ namespace ft {
 	// it = it1 - it2;
 	template< typename lIter, typename rIter>
 		typename reverse_iterator<lIter>::difference_type operator-(const reverse_iterator<lIter> &left, const reverse_iterator<rIter> &right) {
-			return left.base() - right.base();
+			return right.base() - left.base();
 		}
 }
 

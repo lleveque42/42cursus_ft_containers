@@ -6,7 +6,7 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/05 12:43:27 by lleveque          #+#    #+#             */
-/*   Updated: 2022/10/07 14:48:12 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/10/11 17:38:04 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ namespace ft {
 			template<typename Iter>
 				vectorIterator(const vectorIterator<Iter> &i) : _current((iterator_type)i.operator->()) {}
 
-			vectorIterator	operator=(vectorIterator const &src) {
+			vectorIterator	&operator=(vectorIterator const &src) {
 				if (*this != src)
 					_current = src._current;
 				return *this;
@@ -49,16 +49,16 @@ namespace ft {
 				return *_current;
 			}
 
+			reference operator[](const difference_type &n) const {
+				return _current[n];
+			}
+
 			pointer operator->() const {
 				return _current;
 			}
 
 			iterator_type base() const {
 				return _current;
-			}
-
-			vectorIterator operator[](const difference_type &n) {
-				return _current[n];
 			}
 
 			vectorIterator &operator++() {
