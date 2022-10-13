@@ -6,7 +6,7 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/29 15:50:52 by lleveque          #+#    #+#             */
-/*   Updated: 2022/10/11 17:42:28 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/10/13 22:45:55 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 # include "../utils/enable_if.hpp"
 # include "../utils/is_integral.hpp"
 # include "../utils/lexicographical_compare.hpp"
+# include "../utils/swap.hpp"
 
 namespace ft {
 
@@ -311,7 +312,7 @@ namespace ft {
 							reserve(_capacity + diff + 1);
 						if (_size > 0) {
 							for (size_type i = _size; i < _size + diff; ++i)
-								_alloc.construct(&_tab[i], 0);
+								_alloc.construct(&_tab[i], _tab[i - 1]);
 							toMove = _size - pos;
 							_size += diff;
 							for (size_type i = 1; toMove > 0; --toMove) {
@@ -328,9 +329,13 @@ namespace ft {
 						}
 					}
 
-				// void swap(vector<value_type,Allocator>&) {
-				// 	// value_type = tmp;
-				// }
+				void swap(vector &x) {
+					if (*this != x) {
+						ft::swap(_size, x._size);
+						ft::swap(_capacity, x._capacity);
+						ft::swap(_tab, x._tab);
+					}
+				}
 
 				iterator erase(iterator position) {
 					size_type pos = position - begin();
@@ -407,8 +412,10 @@ namespace ft {
 		}
 
 // 	// specialized algorithms:
-// 	template <class T, class Allocator>
-// 		void swap(vector<T,Allocator>& x, vector<T,Allocator>& y);
+		template <class T, class Allocator>
+			void swap(vector<T, Allocator>& x, vector<T, Allocator>& y) {
+				x.swap(y);
+			}
 }
 
 # endif
