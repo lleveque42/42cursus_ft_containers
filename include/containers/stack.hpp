@@ -6,7 +6,7 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/13 23:00:45 by lleveque          #+#    #+#             */
-/*   Updated: 2022/10/14 00:02:05 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/10/17 17:01:02 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,9 @@ namespace ft {
 template <class T, class Container = ft::vector<T> >
 	class stack {
 		public:
-			typedef typename Container::value_type value_type;
-			typedef typename Container::size_type size_type;
-			typedef Container container_type;
+			typedef Container						container_type;
+			typedef typename Container::value_type	value_type;
+			typedef typename Container::size_type	size_type;
 
 		protected:
 			container_type c;

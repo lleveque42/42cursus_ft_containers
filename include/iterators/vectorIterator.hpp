@@ -6,7 +6,7 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/05 12:43:27 by lleveque          #+#    #+#             */
-/*   Updated: 2022/10/11 17:38:04 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/10/17 16:06:15 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,12 +32,15 @@ namespace ft {
 			typedef typename ft::iterator_traits<Iterator>::iterator_category iterator_category;
 
 			vectorIterator() : _current() {}
+
 			explicit vectorIterator(const Iterator &i) : _current(i) {}
+
 			vectorIterator(const vectorIterator &src) : _current(src._current) {}
+
 			~vectorIterator() {}
 
 			template<typename Iter>
-				vectorIterator(const vectorIterator<Iter> &i) : _current((iterator_type)i.operator->()) {}
+				vectorIterator(const vectorIterator<Iter> &i) : _current(i.base()) {}
 
 			vectorIterator	&operator=(vectorIterator const &src) {
 				if (*this != src)

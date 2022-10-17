@@ -6,7 +6,7 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/29 15:50:52 by lleveque          #+#    #+#             */
-/*   Updated: 2022/10/13 22:45:55 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/10/17 17:00:36 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,18 +30,18 @@ namespace ft {
 
 		public:
 			// types:
-				typedef T value_type;
-				typedef std::size_t size_type;
-				typedef Allocator allocator_type;
-				typedef ptrdiff_t difference_type;
-				typedef typename Allocator::reference reference;
-				typedef typename Allocator::const_reference const_reference;
-				typedef typename Allocator::pointer pointer;
-				typedef typename Allocator::const_pointer const_pointer;
-				typedef ft::vectorIterator<pointer> iterator;
-				typedef ft::vectorIterator<const_pointer> const_iterator;
-				typedef ft::reverse_iterator<iterator> reverse_iterator;
-				typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
+				typedef T										value_type;
+				typedef size_t									size_type;
+				typedef Allocator								allocator_type;
+				typedef ptrdiff_t								difference_type;
+				typedef typename Allocator::reference			reference;
+				typedef typename Allocator::const_reference		const_reference;
+				typedef typename Allocator::pointer				pointer;
+				typedef typename Allocator::const_pointer		const_pointer;
+				typedef ft::vectorIterator<pointer>				iterator;
+				typedef ft::vectorIterator<const_pointer>		const_iterator;
+				typedef ft::reverse_iterator<iterator>			reverse_iterator;
+				typedef ft::reverse_iterator<const_iterator>	const_reverse_iterator;
 
 		private:
 			size_type _size;
@@ -292,9 +292,9 @@ namespace ft {
 					if (_size + n > _capacity)
 						reserve(_capacity + n + 1);
 					for (size_type i = _size - 1; i < _size + n - 1; ++i)
-						_alloc.construct(&_tab[i + 1], _tab[i]);
+						_alloc.construct(&_tab[i + 1], _tab[i - n + 1]);
 					_size += n;
-					for (size_type i = _size - n; i >= pos + n; i--)
+					for (size_type i = _size - n - 1; i >= pos + n; i--)
 						_tab[i] = _tab[i - n];
 					for (; n > 0; n--)
 						_tab[pos + n - 1] = x;
