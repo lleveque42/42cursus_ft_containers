@@ -6,7 +6,7 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/17 16:10:33 by lleveque          #+#    #+#             */
-/*   Updated: 2022/10/17 17:32:20 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/10/19 16:29:32 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,11 @@
 # include <memory>
 # include <iostream>
 # include "../utils/pair.hpp"
+# include "../utils/rbt.hpp"
 # include "../iterators/reverse_iterator.hpp"
 
 namespace ft {
- 
+
 	template <class Key, class T, class Compare = std::less<Key>, class Allocator = std::allocator<ft::pair<const Key, T> > >
 	class map {
 
@@ -40,6 +41,7 @@ namespace ft {
 				typedef typename Allocator::const_pointer		const_pointer;
 				typedef ft::reverse_iterator<iterator>			reverse_iterator;
 				typedef ft::reverse_iterator<const_iterator>	const_reverse_iterator;
+				typedef RBT<value_type, key_compare, allocator_type> tree_type;
 
 			class value_compare : public binary_function<value_type,value_type,bool> {
 
@@ -54,9 +56,13 @@ namespace ft {
 					}
 			};
 
+		private:
+			tree_type *_tree;
+
+		public:
 			// 23.3.1.1 construct/copy/destroy:
 				explicit map(const key_compare &comp = key_compare(),
-						const allocator_type &alloc = allocator_type())
+						const allocator_type &alloc = allocator_type()) : _tree();
 
 				template <class InputIterator>
 					map(InputIterator first, InputIterator last, const key_compare &comp = key_compare(), const allocator_type &alloc = allocator_type());
@@ -86,7 +92,7 @@ namespace ft {
 				mapped_type& operator[](const key_type& x);
 
 			// modifiers:
-				pair<iterator, bool> insert(const value_type &x);
+				ft::pair<iterator, bool> insert(const value_type &x);
 				iterator insert(iterator position, const value_type &x);
 				template <class InputIterator>
 				void insert(InputIterator first, InputIterator last);
@@ -108,8 +114,8 @@ namespace ft {
 				const_iterator lower_bound(const key_type &x) const;
 				iterator upper_bound(const key_type &x);
 				const_iterator upper_bound(const key_type &x) const;
-				pair<iterator,iterator> equal_range(const key_type &x);
-				pair<const_iterator,const_iterator> equal_range(const key_type &x) const;
+				ft::pair<iterator,iterator> equal_range(const key_type &x);
+				ft::pair<const_iterator,const_iterator> equal_range(const key_type &x) const;
 			};
 
 	template <class Key, class T, class Compare, class Allocator>
