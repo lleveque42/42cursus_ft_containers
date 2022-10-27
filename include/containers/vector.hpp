@@ -6,7 +6,7 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/29 15:50:52 by lleveque          #+#    #+#             */
-/*   Updated: 2022/10/17 17:00:36 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/10/27 14:57:36 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,8 +99,8 @@ namespace ft {
 				}
 
 				vector &operator=(const vector &src) {
-					if (this == &src)
-						return * this;
+					if (*this == src)
+						return *this;
 					clear();
 					_alloc.deallocate(_tab, _capacity);
 					_alloc = src._alloc;
