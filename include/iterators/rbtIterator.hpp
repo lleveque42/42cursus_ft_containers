@@ -6,7 +6,7 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/24 17:22:47 by lleveque          #+#    #+#             */
-/*   Updated: 2022/10/27 16:16:02 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/10/31 20:25:04 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,8 +69,8 @@ namespace ft {
 						_current = _current->left;
 				}
 				else if (_current && _current->parent) {
-					pointer current = _current;
-					pointer tmp = _current->parent;
+					node_pointer current = _current;
+					node_pointer tmp = _current->parent;
 					while (tmp && _current == tmp->right) {
 						if (tmp->parent == NULL) {
 							_current = current->parent;
@@ -91,8 +91,8 @@ namespace ft {
 						_current = _current->right;
 				}
 				else if (_current && _current->parent) {
-					pointer current = _current;
-					pointer tmp = _current->parent;
+					node_pointer current = _current;
+					node_pointer tmp = _current->parent;
 					while (tmp && _current == tmp->left) {
 						if (tmp->parent == NULL) {
 							_current = current;
@@ -108,14 +108,22 @@ namespace ft {
 
 			RBTIterator operator++(int) {
 				RBTIterator old = *this;
-				_current++;
+				operator++();
 				return old;
 			}
 
 			RBTIterator operator--(int) {
 				RBTIterator old = *this;
-				_current--;
+				operator--();
 				return old;
+			}
+
+			friend bool operator==(const RBTIterator<T, N> &x, const RBTIterator<T, N> &y) {
+				return x.base() == y.base();
+			}
+
+			friend bool operator!=(const RBTIterator<T, N> &x, const RBTIterator<T, N> &y) {
+				return x.base() != y.base();
 			}
 	};
 }
