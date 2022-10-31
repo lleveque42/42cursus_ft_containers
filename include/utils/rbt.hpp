@@ -6,7 +6,7 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 13:29:37 by lleveque          #+#    #+#             */
-/*   Updated: 2022/10/29 15:50:10 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/10/31 20:35:24 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,9 @@
 
 # include <memory>
 # include "../iterators/rbtIterator.hpp"
+# include "../utils/lexicographical_compare.hpp"
+# include "../utils/pair.hpp"
+# include "../utils/swap.hpp"
 
 enum Color {RED, BLACK};
 
@@ -70,14 +73,6 @@ namespace ft {
 				return node;
 			}
 
-			Node *_maxNode() {
-				Node *tmp = _root;
-
-				while (tmp && tmp->right != NULL && tmp->right != _end)
-					tmp = tmp->right;
-				return tmp;
-			}
-
 			Node *_getUncle(Node *node) {
 				if (!node)
 					return NULL;
@@ -103,11 +98,10 @@ namespace ft {
 					else
 						return "RLC";
 				}
-				return "OK";
+				return "";
 			}
 
 			void _rightRotate(Node *x) {
-				std::cout << "right rotate\n";
 				Node *y = x->left;
 
 				x->left = y->right;
@@ -125,7 +119,6 @@ namespace ft {
 			}
 
 			void _leftRotate(Node *x) {
-				std::cout << "left rotate\n";
 				Node *y = x->right;
 
 				x->right = y->left;
@@ -144,45 +137,43 @@ namespace ft {
 
 			void _fixInsert(Node *node) {
 				Node *uncle = _getUncle(node);
-				std::cout << "fix insert" << std::endl;
+				Node *p = NULL;
+				Node *gp = NULL;
+
 				if (!node || _size == 1)
 					return ;
 				if (node->parent && node->parent->color == RED) {
+					p = node->parent;
 					if (uncle && uncle->color == RED) {
-						node->parent->color = BLACK;
+						gp = p->parent;
+						p->color = BLACK;
 						uncle->color = BLACK;
-						node->parent->parent->color = RED;
-						// _root->color = BLACK;
-						// node = node->parent->parent;
-						_fixInsert(node->parent->parent);
+						if (_root != gp)
+							gp->color = RED;
+						_fixInsert(gp);
 					}
-					else {
-						std::string insertCase = _insertCase(node);
-						if (insertCase == "LLC") {
-							std::cout << "LLC" << std::endl;
-							_rightRotate(node->parent->parent);
-							ft::swap(node->parent->color, node->parent->right->color);
+					else if (node->parent->parent) {
+						gp = p->parent;
+						if (gp && gp->left == p) {
+							if (p->right == node) {
+								node = p;
+								_leftRotate(node);
+								p = node->parent;
+							}
+							_rightRotate(gp);
+							ft::swap(gp->color, p->color);
 						}
-						else if (insertCase == "LRC") {
-							std::cout << "LRC" << std::endl;
-							_leftRotate(node->parent);
-							_rightRotate(node->parent);
-							ft::swap(node->color, node->right->color);
+						else if (gp && gp->right == p) {
+							if (p->left == node) {
+								node = p;
+								_rightRotate(p);
+								p = node->parent;
+							}
+							_leftRotate(gp);
+							ft::swap(gp->color, p->color);
 						}
-						else if (insertCase == "RRC") {
-							std::cout << "RRC" << std::endl;
-							_leftRotate(node->parent->parent);
-							ft::swap(node->parent->color, node->parent->left->color);
-						}
-						else if (insertCase == "RLC") {
-							std::cout << "RLC" << std::endl;
-							_rightRotate(node->parent);
-							_leftRotate(node->parent);
-							ft::swap(node->color, node->left->color);
-						}
-						// _root->color = BLACK;
-						if (insertCase != "OK")
-							_fixInsert(node->parent);
+						_root->color = BLACK;
+						_fixInsert(node);
 					}
 				}
 				_root->color = BLACK;
@@ -210,6 +201,38 @@ namespace ft {
 				_destroyNode(destroyed);
 			}
 
+			Node *_maxNode() const {
+				Node *max = _root;
+
+				while (max && max->right != NULL && max->right != _end)
+					max = max->right;
+				return max;
+			}
+
+			Node *_minNode() const {
+				Node *min = _root;
+
+				while (min && min->left != NULL)
+					min = min->left;
+				return min;
+			}
+
+			Node *_find(const value_type &x) const {
+				Node *root = _root;
+
+				if (!root)
+					return NULL;
+				while (root) {
+					if (_comp(root->data.first, x.first))
+						root = root->right;
+					else if (_comp(x.first, root->data.first))
+						root = root->left;
+					else
+						return root;
+				}
+				return NULL;
+			}
+
 		public:
 
 			RBT(const compare_type &comp = compare_type(), const allocator_type &alloc = allocator_type()) {
@@ -220,6 +243,7 @@ namespace ft {
 				_root = _end;
 			}
 
+ /////////////////////////////////////////////////////////////////////////
 			void printNode(Node *node) {
 				std::cout << "node: " << node << std::endl;
 				std::cout << "first: " << node->data.first << std::endl;
@@ -228,11 +252,32 @@ namespace ft {
 				std::cout << "left: " << node->left << std::endl;
 				std::cout << "right: " << node->right << std::endl;
 			}
+ /////////////////////////////////////////////////////////////////////////
 
 			~RBT() {
 				if (_size)
 					clear();
 				_destroyNode(_root);
+			}
+
+			compare_type comp() const {
+				return _comp;
+			}
+
+			iterator begin() {
+				return iterator(_minNode());
+			}
+
+			const_iterator begin() const {
+				return const_iterator(_minNode());
+			}
+
+			iterator end() {
+				return iterator(_end);
+			}
+
+			const_iterator end() const {
+				return const_iterator(_end);
 			}
 
 			bool empty() const {
@@ -277,19 +322,84 @@ namespace ft {
 				return ft::make_pair(iterator(newNode), true);
 			}
 
-			// iterator insert(iterator position, const value_type &x);
-			// template <class InputIterator>
-			// 	void insert(InputIterator first, InputIterator last);
 			// void erase(iterator position);
 			// size_type erase(const key_type &x);
 			// void erase(iterator first, iterator last);
-			// void swap(map<key_type, mapped_type, key_compare, allocator_type>&);
+
+			void swap(RBT &newTree) {
+				ft::swap(_root, newTree._root);
+				ft::swap(_size, newTree._size);
+				ft::swap(_end, newTree._end);
+				ft::swap(_alloc, newTree._alloc);
+				ft::swap(_comp, newTree._comp);
+			}
 
 			void clear() {
-				// printNode(_root);
 				_clear(_root);
 				_root = _end;
 				_size = 0;
+			}
+
+			iterator find(const value_type &x) {
+				Node *to_find = _find(x);
+
+				if (to_find)
+					return iterator(to_find);
+				return iterator(_end);
+			}
+
+			const_iterator find(const value_type &x) const {
+				Node *to_find = _find(x);
+
+				if (to_find)
+					return const_iterator(to_find);
+				return const_iterator(_end);
+			}
+
+			size_type count(const value_type &x) const {
+				if (_find(x))
+					return 1;
+				return 0;
+			}
+
+			iterator lower_bound(const value_type &x) {
+				iterator it = begin();
+				iterator ite = end();
+
+				for (; it != ite; it++)
+					if (!_comp(it->first, x.first))
+						return it;
+				return ite;
+			}
+
+			const_iterator lower_bound(const value_type &x) const {
+				const_iterator it = begin();
+				const_iterator ite = end();
+
+				for (; it != ite; it++)
+					if (!_comp(it->first, x.first))
+						return it;
+				return ite;
+			}
+
+			iterator upper_bound(const value_type &x) {
+				iterator it = begin();
+				iterator ite = end();
+
+				for (; it != ite; it++)
+					if (_comp(x.first, it->first))
+						return it;
+				return ite;
+			}
+
+			const_iterator upper_bound(const value_type &x) const {
+				const_iterator it = begin();
+				const_iterator ite = end();
+
+				for (; it != ite; it++)
+					if (_comp(x.first, it->first))
+						return it;
+				return ite;
 			}
 
 ////////////////////////////////////////////////////////////////////////////////////////
