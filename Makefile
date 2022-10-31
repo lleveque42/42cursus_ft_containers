@@ -6,7 +6,7 @@
 #    By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/06/06 14:31:35 by lleveque          #+#    #+#              #
-#    Updated: 2022/10/11 15:39:39 by lleveque         ###   ########.fr        #
+#    Updated: 2022/10/31 17:19:22 by lleveque         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,7 +20,7 @@ NAME = ft_containers
 
 CC = c++
 
-CFLAG = -pedantic -Wall -Wextra -Werror -MMD -MP -std=c++98
+CFLAG = -pedantic -Wall -Wextra -Werror -MMD -MP -std=c++98 -fsanitize=address
 
 MV = mv -f
 
