@@ -6,7 +6,7 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/17 16:10:33 by lleveque          #+#    #+#             */
-/*   Updated: 2022/10/31 20:36:39 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/11/02 18:28:06 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,8 +154,14 @@ namespace ft {
 							_tree.insert(*first);
 					}
 
-			// 	void erase(iterator position);
-			// 	size_type erase(const key_type &x);
+				void erase(iterator position) {
+					erase(position->first);
+				}
+
+				size_type erase(const key_type &x) {
+					return _tree.eraseUnique(ft::make_pair(x, mapped_type()));
+				}
+
 			// 	void erase(iterator first, iterator last);
 
 				void swap(map<key_type, mapped_type, key_compare, allocator_type> &map) {

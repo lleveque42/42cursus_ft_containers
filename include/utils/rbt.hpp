@@ -6,7 +6,7 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 13:29:37 by lleveque          #+#    #+#             */
-/*   Updated: 2022/10/31 20:35:24 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/11/02 17:54:09 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ namespace ft {
 		public:
 
 			typedef T value_type;
+			typedef Key key_type;
 			typedef Alloc allocator_type;
 			typedef Compare compare_type;
 			typedef size_t size_type;
@@ -217,6 +218,22 @@ namespace ft {
 				return min;
 			}
 
+			Node *_maxSubTree(Node *root) const {
+				Node *max = root;
+
+				while (max && max->right != NULL && max->right != _end)
+					max = max->right;
+				return max;
+			}
+
+			Node *_minSubTree(Node *root) const {
+				Node *min = root;
+
+				while (min && min->left != NULL)
+					min = min->left;
+				return min;
+			}
+
 			Node *_find(const value_type &x) const {
 				Node *root = _root;
 
@@ -231,6 +248,70 @@ namespace ft {
 						return root;
 				}
 				return NULL;
+			}
+
+			void _switchChild(Node *child, Node *parent) {
+				if (parent == _root) {
+					_root = child;
+					child->parent = NULL;
+					return ;
+				}
+				child->parent = parent->parent;
+				if (child->parent->left == parent)
+					child->parent->left = child;
+				else
+					child->parent->right = child;
+			}
+
+			void _swapNodesValues(Node *x, Node *y) {
+				key_type	tmp;
+				key_type	*key1;
+				key_type	*key2;
+				value_type	tmp;
+
+				key1 = const_cast<key_type *>(&x->data.first);
+				key2 = const_cast<key_type *>(&y->data.first);
+
+				tmp = *key1;
+				*key1 = *key2;
+				*key2 = tmp;
+
+				tmp.second = x->data.second;
+				x->data.second = y->data.second;
+				y->data.second = tmp.second;
+			}
+
+			Color _deleteNode(Node *node) {
+				Color ogColor = node->color;
+
+				if (!node->left && !node->right) {
+					if (node == _root)
+						_root = NULL;
+					else {
+						if (node == node->parent->left)
+							node->parent->left = NULL;
+						else
+							node->parent->right = NULL;
+					}
+					_destroyNode(node);
+					--_size;
+					_assignEnd();
+				}
+				else if (!node->left || !node->right) {
+					if (!node->left)
+						_switchChild(node->right, node);
+					else
+						_switchChild(node->left, node);
+					_destroyNode(node);
+					--_size;
+					_assignEnd();
+				}
+				else {
+					Node *min = _minSubTree(node->right);
+					_swapNodesValues(node, min);
+					_deleteNode(min);
+				}
+				return ogColor;
 			}
 
 		public:
@@ -251,6 +332,9 @@ namespace ft {
 				std::cout << "color: " << node->color << std::endl;
 				std::cout << "left: " << node->left << std::endl;
 				std::cout << "right: " << node->right << std::endl;
+				if (node->parent)
+					std::cout << "NODE PARENT OK\n";
+				std::cout << "parent first: " << node->parent->data.first << std::endl;
 			}
  /////////////////////////////////////////////////////////////////////////
 
@@ -322,9 +406,31 @@ namespace ft {
 				return ft::make_pair(iterator(newNode), true);
 			}
 
-			// void erase(iterator position);
-			// size_type erase(const key_type &x);
-			// void erase(iterator first, iterator last);
+			void swapNodes(const value_type &x, const value_type &y) {
+				Node *xx = _find(x);
+				Node *yy = _find(y);
+
+				_swapNodes(xx, yy);
+			}
+
+			size_type eraseUnique(const value_type &x) {
+				Node *toErase;
+
+				if (empty())
+					return 0;
+				toErase = _find(x);
+				if (!toErase)
+					return 0;
+				if (_size == 1) {
+					clear();
+					return 1;
+				}
+				if (_deleteNode(toErase) == BLACK)
+					_deleteFix();
+				return 1;
+			}
+
+			void eraseMulti(iterator first, iterator last);
 
 			void swap(RBT &newTree) {
 				ft::swap(_root, newTree._root);

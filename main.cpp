@@ -6,7 +6,7 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/05 12:09:09 by lleveque          #+#    #+#             */
-/*   Updated: 2022/10/31 20:43:41 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/11/02 16:36:01 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,16 +50,16 @@ int main() {
 	// std::cout << my.insert(NAMESPACE::make_pair<int, int>(79, 21)).second << std::endl;
 	// std::cout << "insert 110" << std::endl;
 	// std::cout << my.insert(NAMESPACE::make_pair<int, int>(110, 21)).second << std::endl;
-	// std::cout << "insert 30" << std::endl;
-	// std::cout << my.insert(NAMESPACE::make_pair<int, int>(30, 21)).second << std::endl;
-	// std::cout << "insert 35" << std::endl;
-	// std::cout << my.insert(NAMESPACE::make_pair<int, int>(35, 21)).second << std::endl;
-	// std::cout << "insert 31" << std::endl;
-	// std::cout << my.insert(NAMESPACE::make_pair<int, int>(31, 21)).second << std::endl;
-	// std::cout << "insert 33" << std::endl;
-	// std::cout << my.insert(NAMESPACE::make_pair<int, int>(33, 21)).second << std::endl;
-	NAMESPACE::map<int, int>::iterator it = my.begin();
-	NAMESPACE::map<int, int>::iterator ite = my.end();
+	std::cout << "insert 30" << std::endl;
+	std::cout << my.insert(NAMESPACE::make_pair<int, int>(30, 21)).second << std::endl;
+	std::cout << "insert 35" << std::endl;
+	std::cout << my.insert(NAMESPACE::make_pair<int, int>(35, 21)).second << std::endl;
+	std::cout << "insert 31" << std::endl;
+	std::cout << my.insert(NAMESPACE::make_pair<int, int>(31, 21)).second << std::endl;
+	std::cout << "insert 33" << std::endl;
+	std::cout << my.insert(NAMESPACE::make_pair<int, int>(33, 21)).second << std::endl;
+	// NAMESPACE::map<int, int>::iterator it = my.begin();
+	// NAMESPACE::map<int, int>::iterator ite = my.end();
 	// for (; it != ite; it++)
 		// std::cout << "first: " <<  << " | second: " << *it << std::endl;
 	// srand(time(NULL));
@@ -167,5 +167,14 @@ int main() {
 	// my.insert(NAMESPACE::make_pair<int, int>(385, 21));
 	// my.insert(NAMESPACE::make_pair<int, int>(133, 21));
 	my.printMap();
+	// std::cout << "erase 35" << std::endl;
+	// my.erase(35);
+	// my.swapNodes(35, 31);
+	my.erase(35);
+	my.printMap();
+	std::cout << "NEW ERASE\n";
+	my.erase(31);
+	my.printMap();
+	// my.at(85);
 }
 
