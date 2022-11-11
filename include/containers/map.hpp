@@ -6,7 +6,7 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/17 16:10:33 by lleveque          #+#    #+#             */
-/*   Updated: 2022/11/02 18:28:06 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/11/11 03:04:49 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,7 +162,9 @@ namespace ft {
 					return _tree.eraseUnique(ft::make_pair(x, mapped_type()));
 				}
 
-			// 	void erase(iterator first, iterator last);
+				void erase(iterator first, iterator last) {
+					_tree.eraseMulti(first, last);
+				}
 
 				void swap(map<key_type, mapped_type, key_compare, allocator_type> &map) {
 					_tree.swap(map._tree);
@@ -219,10 +221,14 @@ namespace ft {
 					return ft::make_pair(lower_bound(x), upper_bound(x));
 				}
 
-//////////////////////////////////////////////////////////////////////////////////////
-				void printMap() {
-					_tree.print_red_black_tree();
+				allocator_type get_allocator() const {
+					return allocator_type(_tree._alloc);
 				}
+
+//////////////////////////////////////////////////////////////////////////////////////
+				// void printMap() {
+				// 	_tree.printRedBlackTree();
+				// }
 //////////////////////////////////////////////////////////////////////////////////////
 
 			};
