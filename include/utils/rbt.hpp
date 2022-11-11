@@ -6,7 +6,7 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/19 13:29:37 by lleveque          #+#    #+#             */
-/*   Updated: 2022/11/02 17:54:09 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/11/11 11:42:33 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,9 +61,9 @@ namespace ft {
 				_root = newNode;
 				_root->right = _end;
 				_root->left = NULL;
-				_end->parent = _root;
 				_root->color = BLACK;
 				_size = 1;
+				_assignEnd();
 				return ft::make_pair(iterator(_root), true);
 			}
 
@@ -218,7 +218,19 @@ namespace ft {
 				return min;
 			}
 
+			Node *_sibling(Node *node) {
+				if (!node->parent)
+					return NULL;
+				else if (node->parent->left == node && node->parent->right != _end)
+					return node->parent->right;
+				else if (node->parent->left != _end)
+					return node->parent->left;
+				return NULL;
+			}
+
 			Node *_maxSubTree(Node *root) const {
+				if (root == _end)
+					return NULL;
 				Node *max = root;
 
 				while (max && max->right != NULL && max->right != _end)
@@ -227,6 +239,8 @@ namespace ft {
 			}
 
 			Node *_minSubTree(Node *root) const {
+				if (root == _end)
+					return NULL;
 				Node *min = root;
 
 				while (min && min->left != NULL)
@@ -264,7 +278,7 @@ namespace ft {
 			}
 
 			void _swapNodesValues(Node *x, Node *y) {
-				key_type	tmp;
+				key_type	key;
 				key_type	*key1;
 				key_type	*key2;
 				value_type	tmp;
@@ -272,46 +286,152 @@ namespace ft {
 				key1 = const_cast<key_type *>(&x->data.first);
 				key2 = const_cast<key_type *>(&y->data.first);
 
-				tmp = *key1;
+				key = *key1;
 				*key1 = *key2;
-				*key2 = tmp;
+				*key2 = key;
 
 				tmp.second = x->data.second;
 				x->data.second = y->data.second;
 				y->data.second = tmp.second;
 			}
 
-			Color _deleteNode(Node *node) {
-				Color ogColor = node->color;
+			bool _hasRedChild(Node *node) {
+				if (node->left)
+					if (node->left->color == RED)
+						return true;
+				if (node->right)
+					if (node->right->color == RED)
+						return true;
+				return false;
+			}
 
-				if (!node->left && !node->right) {
+			void _fixBlackRed(Node *sibling, Node *parent) {
+				if (sibling == parent->left) {
+					if (sibling->left && sibling->left->color == RED) {
+						sibling->left->color = sibling->color;
+						sibling->color = parent->color;
+						_rightRotate(parent);
+					}
+					else {
+						sibling->right->color = parent->color;
+						_leftRotate(sibling);
+						_rightRotate(parent);
+					}
+				}
+				else {
+					if (sibling->right && sibling->right->color == RED) {
+						sibling->right->color = sibling->color;
+						sibling->color = parent->color;
+						_leftRotate(parent);
+					}
+					else {
+						sibling->left->color = parent->color;
+						_rightRotate(sibling);
+						_leftRotate(parent);
+					}
+				}
+				parent->color = BLACK;
+			}
+
+			void _fixDoubleBlack(Node *node) {
+				if (node == _root)
+					return;
+				Node *sibling = _sibling(node);
+				Node *parent = node->parent;
+
+				if (!sibling)
+					_fixDoubleBlack(parent);
+				else if (sibling->color == BLACK) {
+					if (_hasRedChild(sibling))
+						_fixBlackRed(sibling, parent);
+					else {
+						sibling->color = RED;
+						if (parent->color == BLACK)
+							_fixDoubleBlack(parent);
+						else
+							parent->color = BLACK;
+					}
+				}
+				else {
+					parent->color = RED;
+					sibling->color = BLACK;
+					if (sibling == parent->left)
+						_rightRotate(parent);
+					else
+						_leftRotate(parent);
+					_fixDoubleBlack(node);
+				}
+			}
+
+			Node *_successor(Node *node) {
+				if (node->right && node->right != _end) {
+					node = node->right;
+					while (node->left)
+						node = node->left;
+					return node;
+				}
+				while (node->parent && node == node->parent->right)
+					node = node->parent;
+				return node->parent;
+			}
+
+			Node *_deleteNoChild(Node *node, Node *sibling, Node *parent) {
+					Node *successor = _successor(node);
+
 					if (node == _root)
 						_root = NULL;
 					else {
-						if (node == node->parent->left)
-							node->parent->left = NULL;
+						if (node->color == BLACK)
+							_fixDoubleBlack(node);
+						else if (sibling)
+							sibling->color = RED;
+						if (node == parent->left)
+							parent->left = NULL;
 						else
-							node->parent->right = NULL;
+							parent->right = NULL;
 					}
 					_destroyNode(node);
 					--_size;
 					_assignEnd();
-				}
-				else if (!node->left || !node->right) {
-					if (!node->left)
-						_switchChild(node->right, node);
-					else
-						_switchChild(node->left, node);
+					return successor;
+			}
+
+			Node *_deleteOneChild(Node *node, Color ogColor) {
+					Node *child;
+
+					if (!node->left) {
+						child = node->right;
+						_switchChild(child, node);
+					}
+					else {
+						child = node->left;
+						_switchChild(child, node);
+					}
 					_destroyNode(node);
+					if (child != _root && ogColor == BLACK && child->color == BLACK)
+						_fixDoubleBlack(child);
+					else
+						child->color = BLACK;
 					--_size;
 					_assignEnd();
-				}
+					return child;
+			}
+
+			Node *_deleteNode(Node *node) {
+				Node *sibling = _sibling(node);
+				Node *parent = node->parent;
+				Color ogColor =  node->color;
+
+				if (!node->left && !node->right)
+					return _deleteNoChild(node, sibling, parent);
+				else if (!node->left || (!node->right || node->right == _end))
+					return _deleteOneChild(node, ogColor);
 				else {
 					Node *min = _minSubTree(node->right);
 					_swapNodesValues(node, min);
 					_deleteNode(min);
 				}
-				return ogColor;
+				return node;
 			}
 
 		public:
@@ -425,12 +545,24 @@ namespace ft {
 					clear();
 					return 1;
 				}
-				if (_deleteNode(toErase) == BLACK)
-					_deleteFix();
+				_deleteNode(toErase);
 				return 1;
 			}
 
-			void eraseMulti(iterator first, iterator last);
+			void eraseMulti(iterator first, iterator last) {
+				size_type i = 0;
+				Node *toDelete = first.base();
+
+				if (first == begin() && last == end()) {
+					clear();
+					return ;
+				}
+				for (iterator it = first; it != last; ++it)
+					++i;
+				for (; i; --i)
+					toDelete = _deleteNode(toDelete);
+				// _deleteNode(toDelete);
+			}
 
 			void swap(RBT &newTree) {
 				ft::swap(_root, newTree._root);
@@ -510,33 +642,33 @@ namespace ft {
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
-			void	printHelper(Node *root, std::string indent, bool last) {
-				if (root != NULL) {
-					std::cout << indent;
-					if (last) {
-						std::cout << "R---- ";
-						indent += "   ";
-					}
-					else {
-						std::cout << "L---- ";
-						indent += "|  ";
-					}
+			// void	printHelper(Node *root, std::string indent, bool last) {
+			// 	if (root != NULL) {
+			// 		std::cout << indent;
+			// 		if (last) {
+			// 			std::cout << "R---- ";
+			// 			indent += "   ";
+			// 		}
+			// 		else {
+			// 			std::cout << "L---- ";
+			// 			indent += "|  ";
+			// 		}
 
-					std::string black = "\033[1;30mBLACK\033[0m";
-					std::string red = "\033[1;31mRED\033[0m";
-					if (root->color == RED)
-						std::cout << root->data.first << " (" << "\033[1;47m" << red << ")" << std::endl;
-					else
-						std::cout << root->data.first << " (" << "\033[1;47m" << black << ")" << std::endl;
-					printHelper(root->left, indent, false);
-					printHelper(root->right, indent, true);
-				}
-			}
+			// 		std::string black = "\033[1;30mBLACK\033[0m";
+			// 		std::string red = "\033[1;31mRED\033[0m";
+			// 		if (root->color == RED)
+			// 			std::cout << root->data.first << " (" << "\033[1;47m" << red << ")" << std::endl;
+			// 		else
+			// 			std::cout << root->data.first << " (" << "\033[1;47m" << black << ")" << std::endl;
+			// 		printHelper(root->left, indent, false);
+			// 		printHelper(root->right, indent, true);
+			// 	}
+			// }
 
-			void	print_red_black_tree() {
-				if (_root)
-					printHelper(_root, "", true);
-			}
+			// void	printRedBlackTree() {
+			// 	if (_root)
+			// 		printHelper(_root, "", true);
+			// }
 	};
 }
 
