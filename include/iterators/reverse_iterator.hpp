@@ -6,7 +6,7 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/07 14:37:16 by lleveque          #+#    #+#             */
-/*   Updated: 2022/10/11 17:02:19 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/11/09 17:32:32 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,9 +32,10 @@ namespace ft {
 			typedef typename ft::iterator_traits<Iterator>::iterator_category iterator_category;
 
 			reverse_iterator() : _current() {}
-			explicit reverse_iterator(const Iterator &i) : _current(i) {}
-			reverse_iterator(const reverse_iterator &src) : _current(src._current) {}
-			~reverse_iterator() {}
+
+			explicit reverse_iterator(iterator_type i) : _current(i) {}
+
+			reverse_iterator(reverse_iterator const &src) : _current(src._current) {}
 
 			template<typename Iter>
 				reverse_iterator(const reverse_iterator<Iter> &i) : _current(i.base()) {}

@@ -6,7 +6,7 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/24 17:22:47 by lleveque          #+#    #+#             */
-/*   Updated: 2022/10/31 20:25:04 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/11/08 16:35:27 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,8 +41,9 @@ namespace ft {
 
 			~RBTIterator() {}
 
-			// template<typename Iter>
-				// RBTIterator(const RBTIterator<Iter> &i) : _current(i.base()) {}
+			operator	RBTIterator<const T, N>() const {
+				return RBTIterator<const T, N>(_current);
+			}
 
 			RBTIterator	&operator=(RBTIterator const &src) {
 				if (*this != src)
