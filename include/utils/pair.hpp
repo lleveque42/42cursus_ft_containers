@@ -6,7 +6,7 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/17 16:29:35 by lleveque          #+#    #+#             */
-/*   Updated: 2022/10/31 20:32:40 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/11/11 16:56:27 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,8 +57,8 @@ namespace ft
 
 	template< class T1, class T2 >
 		bool operator<(const pair<T1,T2> &lhs, const pair<T1,T2> &rhs) {
-			if (lhs.first != lhs.first)
-				return lhs.first < lhs.first;
+			if (lhs.first != rhs.first)
+				return lhs.first < rhs.first;
 			return lhs.second < rhs.second;
 		}
 
