@@ -6,7 +6,7 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/29 15:50:52 by lleveque          #+#    #+#             */
-/*   Updated: 2022/10/27 14:57:36 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/11/11 20:46:55 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,6 @@ namespace ft {
 
 	template <class T, class Allocator = std::allocator<T> >
 	class vector {
-
 
 		public:
 			// types:
@@ -49,14 +48,15 @@ namespace ft {
 			value_type *_tab;
 			allocator_type _alloc;
 
-		public:
-
-			//TEMP
-			void print() {
-				for (size_type i = 0; i < _size; i++)
-					std::cout << "vector[" << i << "] = " << _tab[i] << std::endl;
+			size_type _newSize(size_type more) {
+				more += _size;
+				if (more > _capacity * 2)
+					return more;
+				else
+					return _capacity * 2;
 			}
-			//TEMP
+
+		public:
 
 			// construct/copy/destroy:
 				explicit vector(const allocator_type &alloc = allocator_type()) {
@@ -81,7 +81,7 @@ namespace ft {
 						_capacity = 0;
 						_size = 0;
 						_tab = _alloc.allocate(0);
-						assign(first, last);
+						insert(begin(), first, last);
 					}
 
 				vector(const vector &other) {
@@ -121,7 +121,7 @@ namespace ft {
 
 			void assign(size_type n, const value_type &u) {
 				if (n > max_size())
-						throw std::length_error("cannot create std::vector larger than max_size()");
+						throw std::length_error("vector::assign");
 				clear();
 				resize(n, u);
 				for (size_type i = 0; i < _size; i++)
@@ -167,7 +167,7 @@ namespace ft {
 
 			// capacity:
 				bool empty() const {
-					return _size == 0 ? true : false;
+					return _size == 0;
 				}
 
 				void reserve(size_type n) {
@@ -189,12 +189,15 @@ namespace ft {
 
 				void resize(size_type sz, value_type c = value_type()){
 					if (sz > max_size())
-						throw std::length_error("vector::_M_fill_insert");
+						throw std::length_error("vector::resize");
 					if (sz < _size)
 						for (size_type i = sz; i < _size; i++)
 							_alloc.destroy(&_tab[i]);
 					else {
-						reserve(sz);
+						if (_size * 2 > sz)
+							reserve(_size * 2);
+						else
+							reserve(sz);
 						for (size_type i = _size; i < sz; i++)
 							_alloc.construct(&_tab[i], c);
 					}
@@ -224,7 +227,7 @@ namespace ft {
 
 				reference at(size_type n) {
 					if (n >= _size)
-						throw std::out_of_range("vector::_M_range_check: __n (which is");
+						throw std::out_of_range("vector::at");
 					return _tab[n];
 				}
 
@@ -242,7 +245,7 @@ namespace ft {
 
 				const_reference at(size_type n) const {
 					if (n >= _size)
-						throw std::out_of_range("vector::_M_range_check: __n (which is");
+						throw std::out_of_range("vector::at");
 					return _tab[n];
 				}
 
@@ -257,10 +260,8 @@ namespace ft {
 				}
 
 				void push_back(const value_type &x) {
-					if (_capacity == 0)
-						reserve(1);
-					if (_size + 1 > _capacity)
-						reserve(_capacity * 2);
+					if (_size == _capacity)
+						reserve(_newSize(1));
 					_alloc.construct(&_tab[_size], x);
 					_size++;
 				}
@@ -268,10 +269,8 @@ namespace ft {
 				iterator insert(iterator position, const value_type &x) {
 					size_type pos = position - begin();
 
-					if (_capacity == 0)
-						reserve(1);
 					if (_size + 1 > _capacity)
-						reserve(_capacity * 2);
+						reserve(_newSize(1));
 					if (_size > 0) {
 						_alloc.construct(&_tab[_size], _tab[_size - 1]);
 						for (size_type i = _size - 1; i > pos; i--)
@@ -290,7 +289,7 @@ namespace ft {
 					if (n < 1)
 						return ;
 					if (_size + n > _capacity)
-						reserve(_capacity + n + 1);
+						reserve(_newSize(n));
 					for (size_type i = _size - 1; i < _size + n - 1; ++i)
 						_alloc.construct(&_tab[i + 1], _tab[i - n + 1]);
 					_size += n;
@@ -309,7 +308,7 @@ namespace ft {
 						for (InputIterator tmp = first; tmp != last; tmp++)
 							diff++;
 						if (_size + diff > _capacity)
-							reserve(_capacity + diff + 1);
+							reserve(_size + diff);
 						if (_size > 0) {
 							for (size_type i = _size; i < _size + diff; ++i)
 								_alloc.construct(&_tab[i], _tab[i - 1]);
@@ -319,8 +318,10 @@ namespace ft {
 								_tab[_size - i] = _tab[_size - diff - i];
 								++i;
 							}
-							for (size_type i = 0; i < diff; i++)
-								_tab[pos + i] = *first++;
+							last--;
+							for (size_type i = diff - 1; i != 0; i--)
+								_tab[pos + i] = *last--;
+							_tab[pos] = *last--;
 						}
 						else {
 							for (size_type i = 0; i < diff; i++)
@@ -399,19 +400,15 @@ namespace ft {
 
 	template <class T, class Allocator>
 		bool operator>=(const vector<T,Allocator>& x, const vector<T,Allocator>& y) {
-			if (x == y || x > y)
-				return true;
-			return false;
+			return !(x < y);
 		}
 
 	template <class T, class Allocator>
 		bool operator<=(const vector<T,Allocator>& x, const vector<T,Allocator>& y) {
-			if (x == y || x < y)
-				return true;
-			return false;
+			return !(y < x);
 		}
 
-// 	// specialized algorithms:
+	// specialized algorithms:
 		template <class T, class Allocator>
 			void swap(vector<T, Allocator>& x, vector<T, Allocator>& y) {
 				x.swap(y);
