@@ -6,11 +6,11 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/05 12:09:09 by lleveque          #+#    #+#             */
-/*   Updated: 2022/11/14 11:49:04 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/11/14 12:00:55 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-// #define FT /* comment to compile with std */
+#define FT /* comment to compile with std */
 #ifndef FT
 # include <vector>
 # include <stack>
@@ -252,11 +252,15 @@ void vector_tests() {
 		}
 		std::cout << TAB << STAR << "vector[" << vec1.size() - 1 << "]" << ORANGE << " = " << RESET << *crite << std::endl;
 		std::cout << std::endl;
-		std::cout << TAB << "-> trying to change crit or crite value for 42 won't compile as they are const_reverse_iterator ! (comment __NO_CONST and see what happens)" << std::endl;
+		std::cout << TAB << "-> trying to change crit or crite value for 42 won't compile as they are const_reverse_iterator ! (comment __NO_CONST and see what happens)" << std::endl << std::endl;
 #ifndef __NO_CONST
 		*crit = 42;
 		*crite = 42;
 #endif
+		std::cout << TAB << "-> const_iterator and iterator comparaison (cit and it are equal to vec.begin())" << std::endl;
+		NS::vector<T1>::iterator it = vec1.begin();
+		cit = vec1.begin();
+		std::cout << TAB << STAR << "cit == it" << ORANGE << " : " << RESET << (cit == it) << std::endl;
 		std::cout << std::endl;
 	}
 	std::cout << BOLD << RED << "------------------------------------------" << std::endl;
