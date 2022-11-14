@@ -6,7 +6,7 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/05 12:09:09 by lleveque          #+#    #+#             */
-/*   Updated: 2022/11/11 20:43:34 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/11/14 11:06:34 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -334,6 +334,18 @@ void vector_tests() {
 		std::cout << TAB << STAR << "vec1[9]" << ORANGE << " = " << RESET << vec1[9] << std::endl << std::endl ;
 		std::cout << TAB << "-> undefined behavior if out of range." << std::endl;
 		std::cout << TAB << SPACE << STAR << "vec1[231]" << ORANGE << " = " << RESET << vec1[231] << std::endl << std::endl;
+		std::cout << TAB << "-> modifying value with operator[] : vec1[7] = 42;" << std::endl;
+		vec1[7] = 42;
+		std::cout << TAB << SPACE  << STAR<< "vec1[7]" << ORANGE << " = " << RESET << vec1[7] << std::endl << std::endl;
+		const T1 &value = vec1[9];
+		static_cast<void>(value);
+		std::cout << TAB << "-> reading vec1 by getting a const value :" << std::endl;
+		std::cout << TAB << SPACE << "-> const T1 &value = vec1[9];" << std::endl;
+		std::cout << TAB << TAB << "value" << ORANGE << " = " << RESET << value << std::endl << std::endl;
+		std::cout << TAB << "-> trying to change value won't compile as value is a const reference from operator[] const ! (comment __NO_CONST and see what happens)" << std::endl << std::endl;
+#ifndef __NO_CONST
+		value = 42 * 3;
+#endif
 		std::cout << SPACE << BOLD << ORANGE << UL << "--> at():" << RESET << " vec1.at();" << std::endl << std::endl;
 		{
 			std::cout << TAB << "-> modifying vec1 : vec1.at(4) = 42;" << std::endl;
@@ -351,7 +363,7 @@ void vector_tests() {
 			const T1 &value2 = vec1.at(9);
 			static_cast<void>(value2);
 			std::cout << TAB << "-> reading vec1 by getting a const value :" << std::endl;
-			std::cout << TAB << SPACE << "-> const T1 &value1 = vec1.at(9);" << std::endl;
+			std::cout << TAB << SPACE << "-> const T1 &value2 = vec1.at(9);" << std::endl;
 			std::cout << TAB << TAB << "value2" << ORANGE << " = " << RESET << value2 << std::endl << std::endl;
 		  	std::cout << TAB << "-> trying to change value2 won't compile as value2 is a const reference from at() const ! (comment __NO_CONST and see what happens)" << std::endl << std::endl;
 #ifndef __NO_CONST
@@ -359,9 +371,13 @@ void vector_tests() {
 #endif
 		}
 		std::cout << SPACE << BOLD << ORANGE << UL << "--> front():" << RESET << " vec1.front();" << std::endl << std::endl;
-		std::cout << TAB << TAB << "vec1.front()" << ORANGE << " = " << RESET << vec1.front() << std::endl << std::endl;
+		std::cout << TAB << TAB << "vec1.front()" << ORANGE << " = " << RESET << vec1.front() << std::endl;
+		const T1 &value1 = vec1.front();
+		std::cout << TAB << TAB << "const vec1.front()" << ORANGE << " = " << RESET << value1 << std::endl << std::endl;
 		std::cout << SPACE << BOLD << ORANGE << UL << "--> back():" << RESET << " vec1.back();" << std::endl << std::endl;
-		std::cout << TAB << TAB << "vec1.back()" << ORANGE << " = " << RESET << vec1.back() << std::endl << std::endl;
+		std::cout << TAB << TAB << "vec1.back()" << ORANGE << " = " << RESET << vec1.back() << std::endl;
+		const T1 &value2 = vec1.back();
+		std::cout << TAB << TAB << "const vec1.back()" << ORANGE << " = " << RESET << value2 << std::endl << std::endl;
 	}
 	std::cout << BOLD << RED << "------------------------------------------" << std::endl;
 	std::cout << "------------ MODIFIERS TESTS -------------" << std::endl;
@@ -378,7 +394,7 @@ void vector_tests() {
 		NS::vector<T3> vec3;
 		printVec(vec3, 1);
 		std::cout << SPACE << BOLD << ORANGE << UL << "--> assign():" << RESET << " vec1.assign();" << std::endl << std::endl;
-		std::cout << TAB << "-> assign to vec3 4 times \"Hello World!\" : vec1.assign(7, 42);" << std::endl;
+		std::cout << TAB << "-> assign to vec3 4 times \"Hello World!\" : vec1.assign(4, \"Hello World!\");" << std::endl;
 		vec3.assign(4, "Hello World!");
 		printVec(vec3, 1);
 		std::cout << TAB << "-> assign to vec1 7 times 42 : vec1.assign(7, 42);" << std::endl;
@@ -418,7 +434,7 @@ void vector_tests() {
 		for (int i = 0; i < 3;  i++)
 			vec1.pop_back();
 		printVec(vec1, 1);
-		std::cout << TAB << "-> pop_back 10 times vec1 : vec1.pop_back(); (pop_back causes undefined behavior if vector is empty)" << std::endl;
+		std::cout << TAB << "-> pop_back 4 times vec1 : vec1.pop_back();" << std::endl;
 		for (int i = 0; i < 4;  i++)
 			vec1.pop_back();
 		printVec(vec1, 1);
@@ -430,7 +446,7 @@ void vector_tests() {
 		std::cout << TAB << "-> insert 3 times 42 in vec1 at position vec1.end() - 2 : vec1.insert(vec1.end() - 2, 3, 42);" << std::endl;
 		vec1.insert(vec1.end() - 2, 3, 42);
 		printVec(vec1, 1);
-		std::cout << TAB << "-> insert 3 times 42 in vec1 at position vec1.begin() + 3 : vec1.insert(vec1.begin() + 3, vec1.begin(), vec1.end());" << std::endl;
+		std::cout << TAB << "-> insert vec1 in vec1 at position vec1.begin() + 3 : vec1.insert(vec1.begin() + 3, vec1.begin(), vec1.end());" << std::endl;
 		vec1.insert(vec1.begin() + 3, vec1.begin(), vec1.end());
 		printVec(vec1, 1);
 		std::cout << SPACE << BOLD << ORANGE << UL << "--> erase():" << RESET << " vec1.erase();" << std::endl << std::endl;
@@ -599,7 +615,7 @@ void stack_tests() {
 	std::cout << TAB << STAR << "stc1.top()" << ORANGE << " = " << RESET << stc1.top() << std::endl;
 	std::cout << TAB << "-> stc1.pop();" << std::endl;
 	stc1.pop();
-	std::cout << TAB << STAR << "stc1.size()" << ORANGE << " = " << RESET << stc1.size() << std::endl;
+	std::cout << TAB << STAR << "stc1.size()" << ORANGE << " = " << RESET << stc1.size() << std::endl << std::endl;
 	std::cout << TAB << STAR << "stc2.size()" << ORANGE << " = " << RESET << stc2.size() << std::endl;
 	std::cout << TAB << STAR << "stc2.top()" << ORANGE << " = " << RESET << stc2.top() << std::endl;
 	std::cout << TAB << "-> stc2.pop();" << std::endl;
@@ -626,12 +642,12 @@ void stack_tests() {
 	for (int i = 0; i < 5; i++)
 		stc5.push(i * 3);
 	std::cout << SPACE << SPACE << "-> comparing stc2 and stc5 :" << std::endl << std::endl;
-	std::cout << TAB << STAR << "stc2 " << ORANGE << "==" << RESET << " stc5 : " << (stc2 == stc4) << std::endl;
-	std::cout << TAB << STAR << "stc2 " << ORANGE << "!=" << RESET << " stc5 : " << (stc2 != stc4) << std::endl;
-	std::cout << TAB << STAR << "stc2 " << ORANGE << "<" << RESET << " stc5 : " << (stc2 < stc4) << std::endl;
-	std::cout << TAB << STAR << "stc2 " << ORANGE << ">" << RESET << " stc5 : " << (stc2 > stc4) << std::endl;
-	std::cout << TAB << STAR << "stc2 " << ORANGE << "<=" << RESET << " stc5 : " << (stc2 <= stc4) << std::endl;
-	std::cout << TAB << STAR << "stc2 " << ORANGE << ">=" << RESET << " stc5 : " << (stc2 >= stc4) << std::endl << std::endl;
+	std::cout << TAB << STAR << "stc2 " << ORANGE << "==" << RESET << " stc5 : " << (stc2 == stc5) << std::endl;
+	std::cout << TAB << STAR << "stc2 " << ORANGE << "!=" << RESET << " stc5 : " << (stc2 != stc5) << std::endl;
+	std::cout << TAB << STAR << "stc2 " << ORANGE << "<" << RESET << " stc5 : " << (stc2 < stc5) << std::endl;
+	std::cout << TAB << STAR << "stc2 " << ORANGE << ">" << RESET << " stc5 : " << (stc2 > stc5) << std::endl;
+	std::cout << TAB << STAR << "stc2 " << ORANGE << "<=" << RESET << " stc5 : " << (stc2 <= stc5) << std::endl;
+	std::cout << TAB << STAR << "stc2 " << ORANGE << ">=" << RESET << " stc5 : " << (stc2 >= stc5) << std::endl << std::endl;
 	std::cout << SPACE << SPACE << "-> comparing stc2 and stc4 :" << std::endl << std::endl;
 	std::cout << TAB << STAR << "stc2 " << ORANGE << "==" << RESET << " stc4 : " << (stc2 == stc4) << std::endl;
 	std::cout << TAB << STAR << "stc2 " << ORANGE << "!=" << RESET << " stc4 : " << (stc2 != stc4) << std::endl;
@@ -692,7 +708,7 @@ void map_tests() {
 		std::cout << TAB << SPACE << "-> map2" << std::endl;
 		printMap(map2, 1);
 		std::cout << TAB << "-> map1 = map2;" << std::endl;
-		std::cout << TAB << SPACE << "-> map2.begin() + 5 = 42;" << std::endl;
+		std::cout << TAB << SPACE << "-> map2.begin() + 5 = 42;" << std::endl << std::endl;
 		map1 = map2;
 		NS::map<T1, T2>::iterator it = map2.begin();
 		for (int i = 0; i < 5; i++)
@@ -720,14 +736,13 @@ void map_tests() {
 		std::cout << TAB << STAR << "map[4]" << ORANGE << " = " << RESET << map[4] << std::endl;
 		std::cout << TAB << STAR << "map[7]" << ORANGE << " = " << RESET << map[7] << std::endl;
 		std::cout << TAB << STAR << "map[9]" << ORANGE << " = " << RESET << map[9] << std::endl << std::endl ;
-		std::cout << TAB << "-> undefined behavior if out of range (creates a new element)." << std::endl;
-		std::cout << TAB << SPACE << STAR << "map[231]" << ORANGE << " = " << RESET << map[231] << std::endl << std::endl;
-		std::cout << TAB << "-> adding to map with operator[]" << std::endl;
-		std::cout << TAB << SPACE << "-> map[42] = 666;" << std::endl;
+		std::cout << TAB << "-> creates a new element if out of range." << std::endl;
+		std::cout << TAB << SPACE << "-> map[231]" << ORANGE << " = " << RESET << map[231] <<"(reading)" << std::endl;
+		std::cout << TAB << SPACE << "-> map[42] = 666; (writing)"  << std::endl;
 		map[42] = 666;
-		std::cout << TAB << SPACE << "-> map[-21] = 42;" << std::endl;
+		std::cout << TAB << SPACE << "-> map[-21] = 42; (writing)"  << std::endl;
 		map[-21] = 42;
-		std::cout << TAB << SPACE << "-> map[999] = 238;" << std::endl;
+		std::cout << TAB << SPACE << "-> map[999] = 238; (writing)"  << std::endl;
 		map[999] = 238;
 		printMap(map, 1);
 		std::cout << TAB << "-> creating an empty map of std::string" << std::endl;
@@ -761,7 +776,7 @@ void map_tests() {
 			std::cout << TAB << STAR << "map[" << it->first << "]" << ORANGE << " = " << RESET << it->second << std::endl;
 		it = map1.begin();
 		std::cout << std::endl;
-		std::cout << TAB << "-> changing it value for 42 : \n" << TAB << TAB << "it = map1.begin();" << ORANGE << " -> " << RESET << "it->second = " << it->second << std::endl;
+		std::cout << TAB << "-> changing it value for 42 : \n" << TAB << TAB << "it = map1.begin();" << ORANGE << " -> " << RESET << "it->second " << ORANGE << "= " << RESET << it->second << std::endl;
 		it->second = 42;
 		std::cout << TAB << TAB << "it->second = 42;" << ORANGE << " -> " << RESET << "it->second = " << it->second << std::endl;
 		std::cout << std::endl;
@@ -1103,7 +1118,7 @@ void map_tests() {
 		for (int i = 0; i < 3; i++)
 			it++;
 		T3 toFind = it->first;
-		std::cout << TAB << "-> toFind : " << toFind << " (while it->first != toFind display it->first, it->second)" << std::endl;
+		std::cout << TAB << "-> toFind : " << toFind << " while (comp(it->first, toFind) -> display it->first, it->second" << std::endl;
 		it = map.begin();
 		for(; comp(it->first, toFind); it++)
 			std::cout << TAB << SPACE << STAR << "map[" << it->first << "]" << ORANGE << " = " << RESET << it->second << std::endl;
@@ -1114,7 +1129,7 @@ void map_tests() {
 			it++;
 		NS::pair<T3, T1> toFind2 = NS::make_pair(it->first, it->second);
 		it = map.begin();
-		std::cout << TAB << "-> toFind : " << toFind2.second << " (while it->first != toFind display it->first, it->second)" << std::endl;
+		std::cout << TAB << "-> toFind2 : " << toFind2.first << " while (map.value_comp()(*it, toFind2)) -> display it->first, it->second" << std::endl;
 		for(; map.value_comp()(*it, toFind2); it++)
 			std::cout << TAB << SPACE << STAR << "map[" << it->first << "]" << ORANGE << " = " << RESET << it->second << std::endl;
 		std::cout << std::endl;
