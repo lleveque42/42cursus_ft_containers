@@ -6,11 +6,11 @@
 /*   By: lleveque <lleveque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/05 12:09:09 by lleveque          #+#    #+#             */
-/*   Updated: 2022/11/14 11:06:34 by lleveque         ###   ########.fr       */
+/*   Updated: 2022/11/14 11:49:04 by lleveque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#define FT /* comment to compile with std */
+// #define FT /* comment to compile with std */
 #ifndef FT
 # include <vector>
 # include <stack>
@@ -899,14 +899,19 @@ void map_tests() {
 			NS::map<T1, T1> map1;
 			std::cout << TAB << "-> inserting pair(42, 2013) : map1.insert(NS::make_pair(42, 2013));" << std::endl;
 			map1.insert(NS::make_pair(42, 2013));
-			std::cout << TAB << "-> inserting pair(2013, 42) : map1.insert(NS::make_pair(2013, 42));" << std::endl;
+			std::cout << TAB << "-> inserting pair(2013, 42) : map1.insert(NS::make_pair(2013, 42));" << std::endl << std::endl;
 			map1.insert(NS::make_pair(2013, 42));
+			std::cout << TAB << "-> creating an iterator it = map1.find(42);" << std::endl;
+			NS::map<T1, T1>::iterator it2 = map1.find(42);
+			std::cout << TAB << STAR << "it->first " << ORANGE << "= " << RESET  << it2->first << " && it->second " << ORANGE << "= " << RESET  << it2->second << std::endl;
 			printMap(map1, 1);
 			std::cout << TAB << "-> inserting pair(8, 2003) with position begin() : map1.insert(map1.begin(), NS::make_pair(8, 2003));" << std::endl;
 			std::cout << TAB << "-> inserting pair(2100, 50) with position begin() : map1.insert(map1.begin(), NS::make_pair(2100, 50));" << std::endl;
 			map1.insert(map1.begin(), NS::make_pair(8, 2003));
 			map1.insert(map1.begin(), NS::make_pair(2100, 50));
 			printMap(map1, 1);
+			std::cout << TAB << "-> checking if it got invalidated by insert" << std::endl;
+			std::cout << TAB << STAR << "it->first " << ORANGE << "= " << RESET  << it2->first << " && it->second " << ORANGE << "= " << RESET  << it2->second << std::endl << std::endl;
 			std::cout << TAB << "-> inserting with iterator range : map1.insert(lst.begin(), lst.end());" << std::endl;
 			std::list<NS::pair<T1, T2> > lst;
 
@@ -917,6 +922,9 @@ void map_tests() {
 			std::cout << SPACE << BOLD << ORANGE << UL << "--> erase():" << RESET << " map.erase();" << std::endl << std::endl;
 			std::cout << TAB << "-> erasing with iterator : map1.erase(map1.find(2013));" << std::endl;
 			std::cout << TAB << "-> erasing with iterator : map1.erase(map1.end() - 1);" << std::endl;
+			std::cout << TAB << "-> creating an iterator it = map1.find(42);" << std::endl;
+			NS::map<T1, T1>::iterator it3 = map1.find(42);
+			std::cout << TAB << STAR << "it->first " << ORANGE << "= " << RESET  << it3->first << " && it->second " << ORANGE << "= " << RESET << it3->second << std::endl;
 			map1.erase(map1.find(2013));
 			NS::map<T1, T1>::iterator it = map1.end();
 			it--;
@@ -929,6 +937,8 @@ void map_tests() {
 			map1.erase(325);
 			map1.erase(0);
 			printMap(map1, 1);
+			std::cout << TAB << "-> checking if it got invalidated by erase" << std::endl;
+			std::cout << TAB << STAR << "it->first " << ORANGE << "= " << RESET  << it2->first << " && it->second " << ORANGE << "= " << RESET  << it2->second << std::endl << std::endl;
 			std::cout << TAB << "-> erasing with iterator range : map1.erase(map1.begin(), map1.end());" << std::endl;
 			map1.erase(map1.begin(), map1.end());
 			printMap(map1, 1);
